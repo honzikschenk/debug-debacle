@@ -58,35 +58,61 @@ def handle_leave_lobby(data):
     leave_room(lobbyCode)
     emit('left_lobby', username + ' has left the room.', room=lobbyCode)
 
-@socketio.on('get-lobby-player-count')
-def get_lobby_info(data):
-    lobbyCode = data.get('lobbyCode')
+# @app.route('/create-lobby', methods=['POST'])
+# def create_lobby():
+#     lobbyCode = random.randint(1000, 9999)
+#     while lobbyCode in lobbies:
+#         lobbyCode = random.randint(1000, 9999)
 
+#     lobbies[lobbyCode] = []
+#     return jsonify({'lobbyCode': lobbyCode})
+
+# @app.route('/join-lobby/<int:lobbyCode>', methods=['POST'])
+# def join_lobby(lobbyCode):
+#     data = request.get_json()
+#     username = data.get('username', '')
+
+#     if lobbyCode not in lobbies:
+#         return jsonify({'error': 'Lobby not found'})
+
+#     lobbies[lobbyCode].append(username)
+#     return jsonify({'success': True})
+
+# @app.route('/leave-lobby/<int:lobbyCode>', methods=['POST'])
+# def leave_lobby(lobbyCode):
+#     data = request.get_json()
+#     username = data.get('username', '')
+
+#     if lobbyCode not in lobbies:
+#         return jsonify({'error': 'Lobby not found'})
+    
+#     if username not in lobbies[lobbyCode]:
+#         return jsonify({'error': 'User not in lobby'})
+
+#     lobbies[lobbyCode].remove(username)
+#     return jsonify({'success': True})
+
+@app.route('/get-lobby-player-count/<int:lobbyCode>', methods=['GET'])
+def get_lobby_info(lobbyCode):
     if lobbyCode not in lobbies:
-        emit('error', {'error': 'Lobby not found'})
-        return
+        return jsonify({'error': 'Lobby not found'})
 
-    emit('lobby_player_count', {'player-count': len(lobbies[lobbyCode])})
+    return jsonify({'player-count': len(lobbies[lobbyCode])})
 
-@socketio.on('delete-lobby')
-def delete_lobby(data):
-    lobbyCode = data.get('lobbyCode')
-
+@app.route('/delete-lobby/<int:lobbyCode>', methods=['POST'])
+def delete_lobby(lobbyCode):
     if lobbyCode not in lobbies:
-        emit('error', {'error': 'Lobby not found'})
-        return
+        return jsonify({'error': 'Lobby not found'})
 
     del lobbies[lobbyCode]
+    return jsonify({'success': True})
 
-    emit('lobby_deleted', 'Lobby #' + lobbyCode + ' has been deleted.')
-
-@socketio.on('get-lobbies')
+@app.route('/get-lobbies', methods=['GET'])
 def get_lobbies():
-    emit('lobbies', {'lobbies': list(lobbies.keys())})
+    return jsonify({'lobbies': list(lobbies.keys())})
 
-@socketio.on('start-game')
-def start_game(data):
-    lobbyCode = data.get('lobbyCode')
+@app.route('/start-game/<int:lobbyCode>', methods=['POST'])
+def start_game(lobbyCode):
     if lobbyCode not in lobbies:
         return jsonify({'error': 'Lobby not found'})
     
