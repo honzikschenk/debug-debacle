@@ -38,7 +38,7 @@ def handle_join_lobby(data):
     lobbies[lobbyCode].append(username)
     print("joined room")
     join_room(str(lobbyCode))
-    emit('joined_lobby', username + ' has entered the room.', to=str(lobbyCode))
+    emit('joined_lobby', username, to=str(lobbyCode))
 
 @socketio.on('leave_lobby')
 def handle_leave_lobby(data):

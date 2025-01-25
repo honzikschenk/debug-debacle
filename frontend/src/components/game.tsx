@@ -54,6 +54,7 @@ const Game = ({
   const [time, setTime] = useState(500);
   const [started, setStarted] = useState(false);
   const [joinedSocket, setJoinedSocket] = useState(false);
+  const [players, setPlayers] = useState<string[]>([]);
 
   const { gameId } = useParams();
 
@@ -71,8 +72,19 @@ const Game = ({
     const startRes = await fetch(`${baseBackendUrl}/start-game/${gameId}`, { method: 'POST' });
   };
 
+  const fetchPlayers = async () => {
+    const currentPlayersRes = await fetch(`${baseBackendUrl}/get-lobby-players/${gameId}`, { method: 'GET' });
+    const { players } = await currentPlayersRes.json();
+
+    setPlayers(players);
+  };
+
   useEffect(() => {
+    fetchPlayers();
     setInterval(() => setTime((prev) => prev - 1), 1000);
+  }, []);
+
+  useEffect(() => {
     if (user?.email && !joinedSocket) {
       socket.emit('join_lobby', {
         lobbyCode: parseInt(gameId),
@@ -81,11 +93,13 @@ const Game = ({
 
       socket.on('start-game', (msg) => {
         setStarted(true);
+        setCode(msg.code);
+        setTime(msg.time);
       })
 
-      // socket.on('joined_lobby', (msg) => {
-      //   console.log(msg);
-      // });
+      socket.on('joined_lobby', (msg) => {
+        setPlayers((prev) => [...prev, msg])
+      });
 
       setJoinedSocket(true);
     }
@@ -93,7 +107,7 @@ const Game = ({
 
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
-      {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} />}
+      {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} players={players} />}
       <TopBar time={time} />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
