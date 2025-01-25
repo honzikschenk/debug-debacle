@@ -11,6 +11,7 @@ import { useParams } from "react-router";
 import Lobby from "./Lobby";
 import { socket } from "@/socket";
 import { useAuth0 } from "@auth0/auth0-react";
+import { baseBackendUrl } from "@/lib/constants";
 
 interface GameProps {
   initialCode?: string;
@@ -66,9 +67,8 @@ const Game = ({
     console.log("Running tests...");
   };
 
-  const handleStart = () => {
-    console.log('starting..');
-    setStarted(true);
+  const handleStart = async () => {
+    const startRes = await fetch(`${baseBackendUrl}/start-game/${gameId}`, { method: 'POST' });
   };
 
   useEffect(() => {
@@ -78,6 +78,10 @@ const Game = ({
         lobbyCode: parseInt(gameId),
         username: user.email
       });
+
+      socket.on('start-game', (msg) => {
+        setStarted(true);
+      })
 
       // socket.on('joined_lobby', (msg) => {
       //   console.log(msg);

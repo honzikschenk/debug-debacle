@@ -36,8 +36,9 @@ def handle_join_lobby(data):
         return
 
     lobbies[lobbyCode].append(username)
-    join_room(lobbyCode)
-    emit('joined_lobby', username + ' has entered the room.', to=lobbyCode)
+    print("joined room")
+    join_room(str(lobbyCode))
+    emit('joined_lobby', username + ' has entered the room.', to=str(lobbyCode))
 
 @socketio.on('leave_lobby')
 def handle_leave_lobby(data):
@@ -88,19 +89,20 @@ def get_lobbies():
 
 @app.route('/start-game/<int:lobbyCode>', methods=['POST'])
 def start_game(lobbyCode):
+    # print(lobbyCode, lobbies)
     if lobbyCode not in lobbies:
         return jsonify({'error': 'Lobby not found'})
     
     # TODO: Grab code from database
     competitionCode = 'print("Hello World")'
     
-    time = 300
+    duration = 300
 
-    lobbyEndTimes[lobbyCode] = time.time() + time
+    lobbyEndTimes[lobbyCode] = time.time() + duration
 
-    socketio.emit('start-game', {'code': competitionCode, 'time': time}, room=lobbyCode)
+    socketio.emit('start-game', {'code': competitionCode, 'time': duration}, to=str(lobbyCode))
 
-    return jsonify({'success': True, 'time': time})
+    return jsonify({'success': True, 'time': duration})
 
 @app.route('/submission/<int:lobbyCode>', methods=['POST'])
 def submission(lobbyCode):
