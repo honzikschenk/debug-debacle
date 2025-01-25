@@ -7,7 +7,7 @@ import {
 import CodeEditor from "./CodeEditor";
 import TestRunner from "./TestRunner";
 import TopBar from "./TopBar";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Lobby from "./Lobby";
 import { socket } from "@/socket";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -61,6 +61,13 @@ const Game = ({
 
   const { user } = useAuth0();
 
+  const navigate = useNavigate();
+
+  const leaveGame = () => {
+    navigate('/');
+    socket.emit('leave_lobby', {'lobbyCode': parseInt(gameId), 'username': user.name});
+  }
+
   const handleRunCode = () => {
     console.log("Running code:", code);
   };
@@ -111,7 +118,7 @@ const Game = ({
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
       {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} players={players} />}
-      <TopBar time={time} playerCount={playerCount} lobbyCode={parseInt(gameId)} />
+      <TopBar time={time} playerCount={playerCount} lobbyCode={parseInt(gameId)} leaveGame={leaveGame} />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
           <CodeEditor code={code} onChange={setCode} onRun={handleRunCode} />

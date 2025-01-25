@@ -2,21 +2,23 @@ import { Gamepad2, Link, Timer, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "./ui/button";
 import { NavLink } from "react-router-dom";
+import { Toaster } from "./ui/toaster";
 
 interface TopBarProps {
   time: number;
   playerCount: number;
   lobbyCode: number;
+  leaveGame: () => void;
 }
 
-const TopBar = ({ time, playerCount, lobbyCode }: TopBarProps) => {
+const TopBar = ({ time, playerCount, lobbyCode, leaveGame }: TopBarProps) => {
   const { toast } = useToast();
 
   const copyCode = (): void => {
     navigator.clipboard.writeText(lobbyCode.toString())
     toast({
         title: "Code Copied!",
-        description: "You can now share the code with your friends.",
+        description: "You can now share the code with your friends."
       })
   }
 
@@ -38,8 +40,9 @@ const TopBar = ({ time, playerCount, lobbyCode }: TopBarProps) => {
         </div>
       </div>
       <div className="flex items-center gap-x-2">
-        <Button onClick={() => copyCode}>Copy Link <Link className="w-4 h-4 ml-2" /></Button>
-        <Button variant="destructive">Leave</Button>
+        <Button onClick={() => copyCode()}>Copy Link <Link className="w-4 h-4 ml-2" /></Button>
+        <Button onClick={() => leaveGame()} variant="destructive">Leave</Button>
+        <Toaster />
       </div>
     </nav>
   )
