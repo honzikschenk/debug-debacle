@@ -28,7 +28,17 @@ class EvaluatedData:
     
     def get_dump(self):
         return (self.actual_output, self.expected_output, self.test_outcome, self.errors, self.actual_correct, self.total_tests)
-    
+
+{'code': 'def is_palindrome(s):\n    left = 0\n    right = len(s)\n    while left < right:\n        if s[left].lower() != s[right-1].lower():\n            return False\n        left += 1\n        right -= 1\n    return True', 'description': 'The function checks if a given string is a palindrome.', 'testCases': ["['', 'A', 'radar', 'race car', 'a man a plan a canal panama']", '[True, True, True, True, True]']}
+
+{'code': 'def find_missing_number(arr):\n    n = len(arr) \n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(arr)\n    return expected_sum - actual_sum + 1', 'description': 'The function `find_missing_number` takes an array `arr` and returns the missing number in the range `[1, n]`, where `n` is the length of the array plus 1.', 'testCases': ['[1, 2, 3, 4, 5, 6, 7, 8, 9]', '[10]', '[1, 2, 3, 4, 5, 6, 7, 8]', '[9]', '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]', '[12]', '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]', '[10]', '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]', '[11]']}
+
+{'code': 'def find_unique_elements(lst):\n    """\n    Given a list of elements, return a new list with only the unique elements.\n    """\n    unique_elements = set()\n    for item in lst:\n        if item % 2 == 0:\n            unique_elements.add(item)\n    return list(unique_elements)', 'description': 'The function removes duplicate elements from a list.', 'testCases': ['[', '[1, 2, 3, 4, 5],', '[1, 2, 3, 4, 5],', '[1, 1, 2, 2, 3],', '[1, 2, 3],', '[1, 2, 3, 4, 5, 1, 2, 3, 4, 5],', '[1],', '["apple", "banana", "cherry", "apple"],', '["apple", "banana", "cherry"],', '[],', '[]', ']']}
+
+{'code': 'def find_unique_characters(string):\n    unique_chars = set()\n    for char in string:\n        if char in unique_chars:\n            unique_chars.remove(char)\n        else:\n            unique_chars.add(char)\n    return len(unique_chars)', 'description': 'The function finds the number of unique characters in a given string.', 'testCases': ["['abc', 'aabb', 'hello world', '', 'abcabc']", '[3, 2, 10, 0, 3]']}
+
+{'code': "def is_palindrome(s):\n    s = ''.join(c for c in s.upper() if c.isalnum())\n    return s == s[::-1]", 'description': 'This function checks if a given string is a palindrome.', 'testCases': ["['racecar', 'A man, a plan, a canal: Panama', 'Madam, I'm Adam', 'hello', '12321']", "['True', 'True', 'True', 'False', 'True']"]}
+
 
 test1_input = ["\"ski\"", "\"biz\"", "\"green \"", "\"pine \"", "\"Chirstmas \""]
 test1_output = ["skitree", "biztree", "green tree", "pine tree", "Chirstmas tree"]
@@ -58,6 +68,14 @@ def create_test_line(function_name, input):
     test_lines = test_lines + "\n" + "print(" + function_name + "(" + input + "))"
     return test_lines
 
+def parse_testcode_data(rawdata):
+    input_arr = clean_input
+    expected_output_arr = clea
+
+
+
+    return input_arr, expected_output_arr
+
 #REQUIREMENTS
 #PRE:
 #   CODE: in multi-line string
@@ -70,7 +88,8 @@ def create_test_line(function_name, input):
 #POST returns a boolean value
 #   True if all testcases past
 #   False if anything fails
-def check_code(code :str, input_arr :list, expected_output_arr: list):
+def check_code(code :str, rawdata : dict):
+    input_arr, expected_output_arr = parse_testcode_data(rawdata)
     results = EvaluatedData(len(input_arr))
 
     function_name = find_function_name(code)
