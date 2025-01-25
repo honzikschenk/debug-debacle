@@ -43,16 +43,19 @@ const Home = () => {
         <h1 className="text-7xl">Code Fixer</h1>
         <p className="mt-5 text-lg">Compete with others to fix bugs in code.</p>
         <Button onClick={createLobby} variant="secondary" className="mt-5">Create a Lobby</Button>
-        <p className="mt-10">Join a Lobby:</p>
-        <ScrollArea className="h-72 w-48 mt-2">
-          {lobbies.map((lobby) => (
-            <>
-              <div key={lobby.id}>
-                {lobby.name}
-              </div>
-              <Separator className="my-2 fill-slate-200" />
-            </>
-          ))}
+        
+        <ScrollArea className="h-72 w-48 mt-5 rounded-md border border-slate-500">
+          <div className="p-4">
+            <h4 className="mb-4 text-sm font-medium leading-none text-center">Join a Lobby:</h4>
+            {lobbies.map((lobby) => (
+              <>
+                <div key={lobby.id} className="text-sm">
+                  {lobby.name}
+                </div>
+                <Separator className="my-2 bg-slate-500" />
+              </>
+            ))}
+          </div>
         </ScrollArea>
       </div>
     </div>
