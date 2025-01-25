@@ -55,6 +55,10 @@ def handle_leave_lobby(data):
         return
 
     lobbies[lobbyCode].remove(username)
+
+    if len(lobbies[lobbyCode]) == 0:
+        del lobbies[lobbyCode]
+
     leave_room(lobbyCode)
     emit('left_lobby', username + ' has left the room.', room=lobbyCode)
 
@@ -119,13 +123,32 @@ def start_game(lobbyCode):
     # TODO: Grab code from database
     competitionCode = 'print("Hello World")'
     
-    time = 5
+    time = 300
 
     lobbyEndTimes[lobbyCode] = time.time() + time
 
     socketio.emit('start-game', {'code': competitionCode, 'time': time}, room=lobbyCode)
 
     return jsonify({'success': True, 'time': time})
+
+@app.route('/submission/<int:lobbyCode>', methods=['POST'])
+def submission(lobbyCode):
+    data = request.get_json()
+    username = data.get('username', '')
+    submission = data.get('submission', '')
+
+    if lobbyCode not in lobbies:
+        return jsonify({'error': 'Lobby not found'})
+    
+    if username not in lobbies[lobbyCode]:
+        return jsonify({'error': 'User not in lobby'})
+
+    if time.time() > lobbyEndTimes[lobbyCode] + 30:
+        return jsonify({'error': 'Time is up!'})
+    
+    # TODO: Check submission
+
+    return jsonify({'success': True})
 
 # @app.route('/execute', methods=['POST'])
 # def execute_code():
