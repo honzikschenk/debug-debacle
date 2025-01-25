@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -46,11 +46,10 @@ const Game = ({
   totalTests = 3,
   passedTests = 2,
 }: GameProps) => {
-  const [code, setCode] = React.useState(initialCode);
+  const [code, setCode] = useState(initialCode);
+  const [time, setTime] = useState(500);
 
   const { gameId } = useParams();
-
-  console.log(gameId);
 
   const handleRunCode = () => {
     console.log("Running code:", code);
@@ -60,9 +59,13 @@ const Game = ({
     console.log("Running tests...");
   };
 
+  useEffect(() => {
+    setInterval(() => setTime((prev) => prev - 1), 1000);
+  }, []);
+
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
-      <TopBar />
+      <TopBar time={time} />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
           <CodeEditor code={code} onChange={setCode} onRun={handleRunCode} />

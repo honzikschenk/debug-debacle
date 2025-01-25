@@ -1,11 +1,16 @@
 import { Gamepad2, Link, Timer, User } from "lucide-react";
 import { Button } from "./ui/button";
+import { NavLink } from "react-router-dom";
 
-const TopBar = () => {
+interface TopBarProps {
+  time: number;
+}
+
+const TopBar = ({ time }: TopBarProps) => {
   return (
     <nav className="h-12 w-full text-white bg-slate-800 flex justify-between items-center px-5">
       <div className="flex items-center gap-x-10">
-        <h1 className="font-mono font-bold text-xl mr-5">Bug Fixer</h1>
+        <NavLink className="font-mono font-bold text-xl mr-5" to="/">Bug Fixer</NavLink>
         <div className="flex items-center gap-x-2">
           <User />
           5 players
@@ -16,7 +21,7 @@ const TopBar = () => {
         </div>
         <div className="flex items-center gap-x-2">
           <Timer />
-          2:10
+          {Math.floor(time / 60)}:{String(time % 60).padStart(2, '0')}
         </div>
       </div>
       <div className="flex items-center gap-x-2">

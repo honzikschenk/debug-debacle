@@ -14,7 +14,7 @@ const ScoreDisplay = ({
   passedTests = 7,
 }: ScoreDisplayProps) => {
   return (
-    <div className="w-full p-4 bg-background border rounded-lg shadow-sm">
+    <div className="w-full p-4 bg-slate-950 border rounded-lg shadow-sm text-white">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-medium">Test Results</h3>
         <span
@@ -35,11 +35,6 @@ const ScoreDisplay = ({
         value={score}
         className={cn(
           "h-2",
-          score >= 80
-            ? "bg-green-200"
-            : score >= 50
-              ? "bg-yellow-200"
-              : "bg-red-200",
         )}
       />
 

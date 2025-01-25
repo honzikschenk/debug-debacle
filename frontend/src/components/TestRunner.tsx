@@ -37,17 +37,17 @@ const TestRunner = ({
       passed: true,
     },
   ],
-  onRunTests = () => console.log("Running tests..."),
-  score = 66,
-  totalTests = 3,
-  passedTests = 2,
+  onRunTests,
+  score,
+  totalTests,
+  passedTests,
 }: TestRunnerProps) => {
   return (
     <div className="h-full flex flex-col bg-slate-900 border-l border-slate-800">
       <div className="p-4 border-b border-slate-800">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-slate-200">Test Cases</h2>
-          <Button onClick={onRunTests} className="flex items-center gap-2">
+          <Button onClick={onRunTests} variant="secondary" className="flex items-center gap-2">
             <Play className="w-4 h-4" />
             Run Tests
           </Button>

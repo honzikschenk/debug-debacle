@@ -42,17 +42,9 @@ const CodeEditor = ({
   return (
     <Card className="h-full flex flex-col bg-slate-950 border-slate-800">
       <div className="flex items-center justify-between p-4 border-b border-slate-800">
-        <h2 className="text-sm font-medium text-slate-200">
-          Python Code Editor
+        <h2 className="text-lg font-semibold text-slate-100">
+          Code Editor
         </h2>
-        <Button
-          size="sm"
-          onClick={onRun}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-        >
-          <Play className="w-4 h-4" />
-          Run Code
-        </Button>
       </div>
       <div className="flex-1 p-4">
         <div className="relative h-full">
