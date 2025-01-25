@@ -29,6 +29,31 @@ const CodeEditor = ({
       e.currentTarget.value = e.currentTarget.value.substring(0, start) + "\t" + e.currentTarget.value.substring(end);
 
       e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 1;
+
+      onChange(e.currentTarget.value);
+    } else if (e.key == "Enter") {
+      const start = e.currentTarget.selectionStart;
+      const end = e.currentTarget.selectionEnd;
+      if (e.currentTarget.value.charAt(start - 1) === ':') {
+        e.preventDefault();
+        // Count necessary indentation
+        const lastLineBreak = e.currentTarget.value.substring(0, start).lastIndexOf('\n');
+        let tabsNeeded = 1;
+        if (lastLineBreak !== -1) {
+          let i = lastLineBreak + 1;
+          while (i < e.currentTarget.value.length && [9].includes(e.currentTarget.value.charCodeAt(i))) {
+            tabsNeeded++;
+            i++;
+          }
+          console.log(tabsNeeded, "!");
+        }
+
+        e.currentTarget.value = e.currentTarget.value.substring(0, start) + "\n" + ("\t".repeat(tabsNeeded)) + e.currentTarget.value.substring(end);
+
+        e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 1 + tabsNeeded;
+
+        onChange(e.currentTarget.value);
+      }
     }
   };
 
@@ -53,8 +78,11 @@ const CodeEditor = ({
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={onKeyDown}
             className="w-full h-full resize-none bg-transparent text-transparent font-mono text-sm p-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 caret-white absolute top-0 left-0 z-10"
-            spellCheck="false"
+            spellCheck={false}
             placeholder="Write your Python code here..."
+            autoCapitalize="none"
+            autoComplete="off"
+            autoCorrect="off"
           />
           <pre
             ref={preRef}
