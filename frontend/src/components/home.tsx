@@ -1,82 +1,24 @@
-import React from "react";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import CodeEditor from "./CodeEditor";
-import TestRunner from "./TestRunner";
+import { useNavigate } from "react-router";
 import TopBar from "./TopBar";
+import { Button } from "./ui/button";
 
-interface HomeProps {
-  initialCode?: string;
-  testCases?: Array<{
-    input: string;
-    expectedOutput: string;
-    actualOutput?: string;
-    passed?: boolean;
-  }>;
-  score?: number;
-  totalTests?: number;
-  passedTests?: number;
-}
-
-const Home = ({
-  initialCode = '# Write your Python code here\nprint("Hello World!")',
-  testCases = [
-    {
-      input: 'print("Hello World")',
-      expectedOutput: "Hello World",
-      passed: true,
-    },
-    {
-      input: "print(2 + 2)",
-      expectedOutput: "4",
-      actualOutput: "5",
-      passed: false,
-    },
-    {
-      input: 'print("Python")',
-      expectedOutput: "Python",
-      passed: true,
-    },
-  ],
-  score = 66,
-  totalTests = 3,
-  passedTests = 2,
-}: HomeProps) => {
-  const [code, setCode] = React.useState(initialCode);
-
-  const handleRunCode = () => {
-    console.log("Running code:", code);
+const Home = () => {
+  const createLobby = async () => {
+    // TODO: create lobby then route
+    navigate("/game");
   };
 
-  const handleRunTests = () => {
-    console.log("Running tests...");
-  };
+  const navigate = useNavigate();
 
   return (
-    <div className="h-screen w-full bg-slate-950">
-      <TopBar />
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={50} minSize={30}>
-          <CodeEditor code={code} onChange={setCode} onRun={handleRunCode} />
-        </ResizablePanel>
-
-        <ResizableHandle />
-
-        <ResizablePanel defaultSize={50} minSize={30}>
-          <TestRunner
-            testCases={testCases}
-            onRunTests={handleRunTests}
-            score={score}
-            totalTests={totalTests}
-            passedTests={passedTests}
-          />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+    <div className="min-h-screen w-full bg-slate-950 text-white">
+      <div className="px-48 py-24 text-center">
+        <h1 className="text-7xl">Code Fixer</h1>
+        <p className="mt-5 text-lg">Compete with others to fix bugs in code.</p>
+        <Button onClick={createLobby} variant="secondary" className="mt-5">Create a Lobby</Button>
+      </div>
     </div>
-  );
+  )
 };
 
 export default Home;

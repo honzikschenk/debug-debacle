@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { useRoutes, Routes, Route } from "react-router-dom";
-import Home from "./components/home";
+import Game from "./components/game";
 import routes from "tempo-routes";
+import Home from "./components/home";
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/game/:gameId" element={<Game />} />
         </Routes>
         {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
       </>
