@@ -20,7 +20,7 @@ const Profile = () => {
   }
 
   return isAuthenticated ? (
-    <div>
+    <div className="flex items-center">
       <HoverCard>
         <HoverCardTrigger asChild>
           <Button variant="link">
