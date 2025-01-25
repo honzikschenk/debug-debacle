@@ -14,19 +14,14 @@ socketio = SocketIO(app)
 lobbies = {}
 lobbyEndTimes = {}
 
-@socketio.on('create_lobby')
-def handle_create_lobby(data):
-    username = data.get('username')
-
+@app.route('/create-lobby', methods=['POST'])
+def create_lobby():
     lobbyCode = random.randint(1000, 9999)
     while lobbyCode in lobbies:
         lobbyCode = random.randint(1000, 9999)
 
     lobbies[lobbyCode] = []
-
-    lobbies[lobbyCode].append(username)
-    join_room(lobbyCode)
-    emit('lobby_created', {'lobbyCode': lobbyCode}, room=lobbyCode)
+    return jsonify({'lobbyCode': lobbyCode})
 
 @socketio.on('join_lobby')
 def handle_join_lobby(data):
@@ -61,40 +56,6 @@ def handle_leave_lobby(data):
 
     leave_room(lobbyCode)
     emit('left_lobby', username + ' has left the room.', room=lobbyCode)
-
-# @app.route('/create-lobby', methods=['POST'])
-# def create_lobby():
-#     lobbyCode = random.randint(1000, 9999)
-#     while lobbyCode in lobbies:
-#         lobbyCode = random.randint(1000, 9999)
-
-#     lobbies[lobbyCode] = []
-#     return jsonify({'lobbyCode': lobbyCode})
-
-# @app.route('/join-lobby/<int:lobbyCode>', methods=['POST'])
-# def join_lobby(lobbyCode):
-#     data = request.get_json()
-#     username = data.get('username', '')
-
-#     if lobbyCode not in lobbies:
-#         return jsonify({'error': 'Lobby not found'})
-
-#     lobbies[lobbyCode].append(username)
-#     return jsonify({'success': True})
-
-# @app.route('/leave-lobby/<int:lobbyCode>', methods=['POST'])
-# def leave_lobby(lobbyCode):
-#     data = request.get_json()
-#     username = data.get('username', '')
-
-#     if lobbyCode not in lobbies:
-#         return jsonify({'error': 'Lobby not found'})
-    
-#     if username not in lobbies[lobbyCode]:
-#         return jsonify({'error': 'User not in lobby'})
-
-#     lobbies[lobbyCode].remove(username)
-#     return jsonify({'success': True})
 
 @app.route('/get-lobby-player-count/<int:lobbyCode>', methods=['GET'])
 def get_lobby_info(lobbyCode):
@@ -147,6 +108,9 @@ def submission(lobbyCode):
         return jsonify({'error': 'Time is up!'})
     
     # TODO: Check submission
+    sampleResult = (5, 7)
+
+    socketio.emit('submission', {'username': username, 'result': sampleResult}, room=lobbyCode)
 
     return jsonify({'success': True})
 
