@@ -75,13 +75,13 @@ const Game = ({
     setInterval(() => setTime((prev) => prev - 1), 1000);
     if (user?.email && !joinedSocket) {
       socket.emit('join_lobby', {
-        lobbyCode: gameId,
+        lobbyCode: parseInt(gameId),
         username: user.email
       });
 
-      socket.on('joined_lobby', (msg) => {
-        console.log(msg);
-      });
+      // socket.on('joined_lobby', (msg) => {
+      //   console.log(msg);
+      // });
 
       setJoinedSocket(true);
     }

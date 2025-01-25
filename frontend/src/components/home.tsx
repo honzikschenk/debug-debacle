@@ -21,8 +21,7 @@ const Home = () => {
     const createRes = await fetch(`${baseBackendUrl}/create-lobby`, { method: 'POST' });
     const createData = await createRes.json();
 
-    // TODO: create lobby then route
-    navigate(`/game/${createData}`);
+    navigate(`/game/${createData.lobbyCode}`);
   };
 
   const [lobbies, setLobbies] = useState<Lobby[]>([]);
@@ -47,21 +46,21 @@ const Home = () => {
     setLobbies(fullLobbiesData);
   };
 
-  const joinGame = async (id: number) => {
-    const joinGameRes = await fetch(`${baseBackendUrl}/join-lobby/${id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: user.name
-      })
-    });
+  // const joinGame = async (id: number) => {
+  //   const joinGameRes = await fetch(`${baseBackendUrl}/join-lobby/${id}`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({
+  //       username: user.name
+  //     })
+  //   });
     
-    // TODO: maybe check if successful first
+  //   // TODO: maybe check if successful first
 
-    navigate(`/game/${id}`);
-  };
+  //   navigate(`/game/${id}`);
+  // };
 
   const navigate = useNavigate();
 
@@ -84,14 +83,14 @@ const Home = () => {
             <h4 className="mb-4 text-sm font-medium leading-none text-center">Join a Lobby</h4>
             {lobbies.map((lobby, i) => (
               <>
-                <div key={lobby.id} onClick={() => joinGame(lobby.id)} className="cursor-pointer flex items-center justify-between py-2 px-2 hover:bg-slate-800 transition" to={`/game/${lobby.id}`}>
+                <NavLink key={lobby.id} className="cursor-pointer flex items-center justify-between py-2 px-2 hover:bg-slate-800 transition" to={`/game/${lobby.id}`}>
                   <span className="text-sm">
                     #{lobby.id}
                   </span>
                   <span className="text-xs flex items-center">
                     <User className="w-3 h-3" /> {lobby.players}
                   </span>
-                </div>
+                </NavLink>
                 {i !== lobbies.length - 1 &&
                   <Separator className="bg-slate-500" />
                 }
