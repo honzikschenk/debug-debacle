@@ -4,6 +4,8 @@ import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import Navbar from "./Navbar";
+import { User } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const Home = () => {
   const createLobby = async () => {
@@ -15,24 +17,24 @@ const Home = () => {
 
   const lobbies = [
     {
-      name: 'test',
+      name: 'Lobby 1',
       id: 'test',
       players: 2
     },
     {
-      name: 'test',
+      name: 'Lobby 2',
       id: 'test',
-      players: 2
+      players: 1
     },
     {
-      name: 'test',
+      name: 'Lobby 3',
       id: 'test',
-      players: 2
+      players: 4
     },
     {
-      name: 'test',
+      name: 'Lobby 4',
       id: 'test',
-      players: 2
+      players: 3
     }
   ]
 
@@ -43,16 +45,25 @@ const Home = () => {
         <h1 className="text-7xl">Code Fixer</h1>
         <p className="mt-5 text-lg">Compete with others to fix bugs in code.</p>
         <Button onClick={createLobby} variant="secondary" className="mt-5">Create a Lobby</Button>
+
+        <p className="text-slate-500 my-2">or</p>
         
-        <ScrollArea className="h-72 w-48 mt-5 rounded-md border border-slate-500">
-          <div className="p-4">
-            <h4 className="mb-4 text-sm font-medium leading-none text-center">Join a Lobby:</h4>
-            {lobbies.map((lobby) => (
+        <ScrollArea className="max-h-72 w-48 rounded-md border border-slate-500">
+          <div className="py-4 px-2">
+            <h4 className="mb-4 text-sm font-medium leading-none text-center">Join a Lobby</h4>
+            {lobbies.map((lobby, i) => (
               <>
-                <div key={lobby.id} className="text-sm">
-                  {lobby.name}
-                </div>
-                <Separator className="my-2 bg-slate-500" />
+                <NavLink key={lobby.id} className="flex items-center justify-between py-2 px-2 hover:bg-slate-800 transition" to={`/game/${lobby.id}`}>
+                  <span className="text-sm">
+                    {lobby.name}
+                  </span>
+                  <span className="text-xs flex items-center">
+                    <User className="w-3 h-3" /> {lobby.players}
+                  </span>
+                </NavLink>
+                {i !== lobbies.length - 1 &&
+                  <Separator className="bg-slate-500" />
+                }
               </>
             ))}
           </div>
