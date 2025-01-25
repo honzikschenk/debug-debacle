@@ -26,12 +26,12 @@ def join_lobby(code):
     lobbies[code].append(username)
     return jsonify({'success': True})
 
-@app.route('/get-lobby-info/<int:code>', methods=['GET'])
+@app.route('/get-lobby-player-count/<int:code>', methods=['GET'])
 def get_lobby_info(code):
     if code not in lobbies:
         return jsonify({'error': 'Lobby not found'})
 
-    return jsonify({'players': lobbies[code]})
+    return jsonify({'player-count': len(lobbies[code])})
 
 @app.route('/delete-lobby/<int:code>', methods=['POST'])
 def delete_lobby(code):
@@ -40,6 +40,10 @@ def delete_lobby(code):
 
     del lobbies[code]
     return jsonify({'success': True})
+
+@app.route('/get-lobbies', methods=['GET'])
+def get_lobbies():
+    return jsonify({'lobbies': list(lobbies.keys())})
 
 @app.route('/start-game/<int:code>', methods=['POST'])
 def start_game(code):
