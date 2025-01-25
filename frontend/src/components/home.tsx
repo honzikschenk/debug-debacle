@@ -6,37 +6,36 @@ import { Separator } from "./ui/separator";
 import Navbar from "./Navbar";
 import { User } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { baseBackendUrl } from "@/lib/constants";
+
+type Lobby = string[];
 
 const Home = () => {
   const createLobby = async () => {
+    const createRes = await fetch(`${baseBackendUrl}/create-lobby`, { method: 'POST' });
+    const createData = await createRes.json();
+
+    const lobbyCode = createData['lobby-code'];
+
     // TODO: create lobby then route
-    navigate(`/game/${Math.floor(Math.random() * 100)}`);
+    navigate(`/game/${lobbyCode}`);
+  };
+
+  const [lobbies, setLobbies] = useState<Lobby[]>([]);
+
+  const fetchLobbies = async () => {
+    const lobbiesRes = await fetch(`${baseBackendUrl}/get-lobbies`, { method: 'GET' });
+    const lobbiesData = await lobbiesRes.json();
+
+    setLobbies(lobbiesData.lobbies);
   };
 
   const navigate = useNavigate();
 
-  const lobbies = [
-    {
-      name: 'Lobby 1',
-      id: 'test',
-      players: 2
-    },
-    {
-      name: 'Lobby 2',
-      id: 'test',
-      players: 1
-    },
-    {
-      name: 'Lobby 3',
-      id: 'test',
-      players: 4
-    },
-    {
-      name: 'Lobby 4',
-      id: 'test',
-      players: 3
-    }
-  ]
+  useEffect(() => {
+    fetchLobbies();
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-slate-950 text-white">
@@ -53,12 +52,13 @@ const Home = () => {
             <h4 className="mb-4 text-sm font-medium leading-none text-center">Join a Lobby</h4>
             {lobbies.map((lobby, i) => (
               <>
-                <NavLink key={lobby.id} className="flex items-center justify-between py-2 px-2 hover:bg-slate-800 transition" to={`/game/${lobby.id}`}>
+                <NavLink key={i} className="flex items-center justify-between py-2 px-2 hover:bg-slate-800 transition" to={`/game/${lobby.id}`}>
                   <span className="text-sm">
-                    {lobby.name}
+                    {/* {lobby.name} */}
+                    test lobby
                   </span>
                   <span className="text-xs flex items-center">
-                    <User className="w-3 h-3" /> {lobby.players}
+                    <User className="w-3 h-3" /> {lobby.length}
                   </span>
                 </NavLink>
                 {i !== lobbies.length - 1 &&
