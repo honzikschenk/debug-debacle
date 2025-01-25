@@ -1,18 +1,46 @@
 import io
 import sys
-import subprocess
 
+class EvaluatedData:
+    def __init__(self, num_tests):
+        self.actual_output = []
+        self.expected_output = []
+        self.test_outcome = []
+        self.errors = 0
+        self.actual_correct = 0
+        self.total_tests = num_tests
+    
+    def add_outcome(self, correct : bool, actual_output :str, expected_output :str):
+        if correct:
+            self.actual_correct = self.actual_correct + 1
+            self.test_outcome.append(True)
+        else:
+            self.test_outcome.append(False)
+        self.actual_output.append(actual_output)
+        self.expected_output.append(expected_output)
+
+    def get_individual_state(self, index : int):
+        if (index.isnumeric()):
+            return (self.test_outcome, self.actual_output, self.expected_output)
+
+    def get_overall_state(self):
+        return (self.actual_correct, self.total_tests)
+    
+    def get_dump(self):
+        return (self.actual_output, self.expected_output, self.test_outcome, self.errors, self.actual_correct, self.total_tests)
+    
 
 test1_input = ["\"ski\"", "\"biz\"", "\"green \"", "\"pine \"", "\"Chirstmas \""]
+test1_output = ["skitree", "biztree", "green tree", "pine tree", "Chirstmas tree"]
 test1 = """
 def hello(i):
     i = i + "tree"
     l
-    return len(i)
+    return i
 
 """
 #Finds the function name of thee user_defined code
-def find_function_name(code) ->str:
+def find_function_name(code :str) ->str:
     split_code = code.splitlines()
     i = 0
     while (i < len(split_code) and split_code[i] == ""):
@@ -25,10 +53,9 @@ def find_function_name(code) ->str:
         paren_loc = function_name.find('(')
         return function_name[:paren_loc]
 
-def concat_args_function(function_name, input):
+def create_test_line(function_name, input):
     test_lines = """"""
-    for i in range(len(input)):
-        test_lines = test_lines + "\n" + "print(" + function_name + "(" + input[i] + "))"
+    test_lines = test_lines + "\n" + "print(" + function_name + "(" + input + "))"
     return test_lines
 
 #REQUIREMENTS
@@ -43,31 +70,41 @@ def concat_args_function(function_name, input):
 #POST returns a boolean value
 #   True if all testcases past
 #   False if anything fails
-def check_code(code, input_arr, expected_output):
+def check_code(code :str, input_arr :list, expected_output_arr: list):
+    results = EvaluatedData(len(input_arr))
+
     function_name = find_function_name(code)
     if function_name == "":
-        return False
-    code = code + concat_args_function(function_name, input_arr)
-    try:
-        global_vars = {}
-        local_vars = {}
+        results.errors = 1
+        return results
+    exec(code)
+    for i in range(len(input_arr)):
+        test_line = create_test_line(function_name, input_arr[i])
         eval_code_rd_output = io.StringIO()
         eval_code_rd_err = io.StringIO()
         original_stdout = sys.stdout
         original_error = sys.stderr
         sys.stdout = eval_code_rd_output
-        exec(code, global_vars, local_vars)
-        printed_output = eval_code_rd_output.getvalue()
-        printed_error = eval_code_rd_err.getvalue()
-        sys.stdout = original_stdout
-        sys.stderr = original_error
-        print(printed_output)
-        print("pass")
-        print(local_vars)
-        print(printed_error)
-
-    except:
-        print("HERE")
-        return False
+        sys.stderr = eval_code_rd_err
+        try:
+            exec(test_line)
+            printed_output = eval_code_rd_output.getvalue()
+            printed_error = eval_code_rd_err.getvalue()
+            expected_output_arr[i] = expected_output_arr[i]
+            if (printed_output == expected_output_arr[i]):
+                results.add_outcome(True, printed_output, expected_output_arr[i])
+            else:
+                results.add_outcome(False, printed_output, expected_output_arr[i])
+        except Exception as e:
+            print("ERROR")
+            printed_output = eval_code_rd_output.getvalue()
+            printed_error = eval_code_rd_err.getvalue()
+            sys.stdout = original_stdout
+            sys.stderr = original_error
+            print(printed_error)
+            results.add_outcome(False, printed_error, expected_output_arr[i])
+        
+    return results    
     
-check_code(test1, test1_input, {})
+results = check_code(test1, test1_input, test1_output)
+print(results.get_dump())
