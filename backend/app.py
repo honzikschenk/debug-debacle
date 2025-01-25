@@ -5,11 +5,11 @@ from flask_cors import CORS # type: ignore
 
 import subprocess
 
-from flask_socketio import SocketIO, join_room, leave_room, emit # type: ignore
+from flask_socketio import SocketIO, join_room, leave_room, emit, send # type: ignore
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 lobbies = {}
 lobbyEndTimes = {}
@@ -33,13 +33,16 @@ def handle_join_lobby(data):
     lobbyCode = data.get('lobbyCode')
     username = data.get('username')
 
+    # join_room(lobbyCode)
+    # emit('joined_lobby', username + ' has entered the room.', to=lobbyCode)
+
     if lobbyCode not in lobbies:
         emit('error', {'error': 'Lobby not found'})
         return
 
     lobbies[lobbyCode].append(username)
     join_room(lobbyCode)
-    emit('joined_lobby', username + ' has entered the room.', room=lobbyCode)
+    emit('joined_lobby', username + ' has entered the room.', to=lobbyCode)
 
 @socketio.on('leave_lobby')
 def handle_leave_lobby(data):
@@ -143,5 +146,5 @@ def start_game(lobbyCode):
 #     return jsonify({'output': output, 'error': error})
 
 if __name__ == '__main__':
-    app.run(debug=True)
-    socketio.run(app, debug=True)
+    # app.run(debug=True)
+    socketio.run(app, debug=True, port=3001)

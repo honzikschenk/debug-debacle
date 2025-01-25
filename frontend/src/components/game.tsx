@@ -9,6 +9,8 @@ import TestRunner from "./TestRunner";
 import TopBar from "./TopBar";
 import { useParams } from "react-router";
 import Lobby from "./Lobby";
+import { socket } from "@/socket";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface GameProps {
   initialCode?: string;
@@ -50,8 +52,11 @@ const Game = ({
   const [code, setCode] = useState(initialCode);
   const [time, setTime] = useState(500);
   const [started, setStarted] = useState(false);
+  const [joinedSocket, setJoinedSocket] = useState(false);
 
   const { gameId } = useParams();
+
+  const { user } = useAuth0();
 
   const handleRunCode = () => {
     console.log("Running code:", code);
@@ -68,7 +73,19 @@ const Game = ({
 
   useEffect(() => {
     setInterval(() => setTime((prev) => prev - 1), 1000);
-  }, []);
+    if (user?.email && !joinedSocket) {
+      socket.emit('join_lobby', {
+        lobbyCode: gameId,
+        username: user.email
+      });
+
+      socket.on('joined_lobby', (msg) => {
+        console.log(msg);
+      });
+
+      setJoinedSocket(true);
+    }
+  }, [user?.email, joinedSocket, socket, gameId]);
 
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
