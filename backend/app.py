@@ -34,6 +34,10 @@ def handle_join_lobby(data):
     if lobbyCode not in lobbies:
         emit('error', {'error': 'Lobby not found'})
         return
+    
+    if username in lobbies[lobbyCode]:
+        emit('error', {'error': 'User already in lobby'})
+        return
 
     lobbies[lobbyCode].append(username)
     print("joined room")

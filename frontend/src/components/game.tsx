@@ -52,6 +52,7 @@ const Game = ({
 }: GameProps) => {
   const [code, setCode] = useState(initialCode);
   const [time, setTime] = useState(500);
+  const [playerCount, setPlayerCount] = useState(0);
   const [started, setStarted] = useState(false);
   const [joinedSocket, setJoinedSocket] = useState(false);
   const [players, setPlayers] = useState<string[]>([]);
@@ -85,10 +86,10 @@ const Game = ({
   }, []);
 
   useEffect(() => {
-    if (user?.email && !joinedSocket) {
+    if (user?.name && !joinedSocket) {
       socket.emit('join_lobby', {
         lobbyCode: parseInt(gameId),
-        username: user.email
+        username: user.name
       });
 
       socket.on('start-game', (msg) => {
@@ -101,14 +102,16 @@ const Game = ({
         setPlayers((prev) => [...prev, msg])
       });
 
+      setPlayerCount(playerCount + 1);
+
       setJoinedSocket(true);
     }
-  }, [user?.email, joinedSocket, socket, gameId]);
+  }, [user?.name, joinedSocket, socket, gameId]);
 
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
       {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} players={players} />}
-      <TopBar time={time} />
+      <TopBar time={time} playerCount={playerCount} lobbyCode={parseInt(gameId)} />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
           <CodeEditor code={code} onChange={setCode} onRun={handleRunCode} />
