@@ -7,6 +7,7 @@ import { User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { baseBackendUrl } from "@/lib/constants";
+import { useAuth0 } from "@auth0/auth0-react";
 
 type Lobby = {
   id: number,
@@ -14,6 +15,8 @@ type Lobby = {
 };
 
 const Home = () => {
+  const { user } = useAuth0();
+
   const createLobby = async () => {
     const createRes = await fetch(`${baseBackendUrl}/create-lobby`, { method: 'POST' });
     const createData = await createRes.json();
@@ -51,7 +54,7 @@ const Home = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        username: '' // TODO
+        username: user.name
       })
     });
     

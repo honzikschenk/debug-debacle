@@ -8,6 +8,7 @@ import CodeEditor from "./CodeEditor";
 import TestRunner from "./TestRunner";
 import TopBar from "./TopBar";
 import { useParams } from "react-router";
+import Lobby from "./Lobby";
 
 interface GameProps {
   initialCode?: string;
@@ -48,6 +49,7 @@ const Game = ({
 }: GameProps) => {
   const [code, setCode] = useState(initialCode);
   const [time, setTime] = useState(500);
+  const [started, setStarted] = useState(false);
 
   const { gameId } = useParams();
 
@@ -59,12 +61,18 @@ const Game = ({
     console.log("Running tests...");
   };
 
+  const handleStart = () => {
+    console.log('starting..');
+    setStarted(true);
+  };
+
   useEffect(() => {
     setInterval(() => setTime((prev) => prev - 1), 1000);
   }, []);
 
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
+      {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} />}
       <TopBar time={time} />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
