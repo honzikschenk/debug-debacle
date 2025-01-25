@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/resizable";
 import CodeEditor from "./CodeEditor";
 import TestRunner from "./TestRunner";
+import TopBar from "./TopBar";
 
 interface HomeProps {
   initialCode?: string;
@@ -56,6 +57,7 @@ const Home = ({
 
   return (
     <div className="h-screen w-full bg-slate-950">
+      <TopBar />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
           <CodeEditor code={code} onChange={setCode} onRun={handleRunCode} />
