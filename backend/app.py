@@ -59,7 +59,7 @@ def handle_leave_lobby(data):
         del lobbies[lobbyCode]
 
     leave_room(lobbyCode)
-    emit('left_lobby', username + ' has left the room.', room=lobbyCode)
+    emit('left_lobby', username + ' has left the room.', to=lobbyCode)
 
 @app.route('/get-lobby-player-count/<int:lobbyCode>', methods=['GET'])
 def get_lobby_info(lobbyCode):
@@ -120,9 +120,9 @@ def submission(lobbyCode):
         return jsonify({'error': 'Time is up!'})
     
     # TODO: Check submission
-    sampleResult = (5, 7)
+    score = (5, 7)
 
-    socketio.emit('submission', {'username': username, 'result': sampleResult}, room=lobbyCode)
+    socketio.emit('submission', {'username': username, 'result': score}, to=lobbyCode)
 
     return jsonify({'success': True})
 
