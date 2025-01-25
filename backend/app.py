@@ -67,6 +67,13 @@ def get_lobby_info(lobbyCode):
 
     return jsonify({'player-count': len(lobbies[lobbyCode])})
 
+@app.route('/get-lobby-players/<int:lobbyCode>', methods=['GET'])
+def get_lobby_players(lobbyCode):
+    if lobbyCode not in lobbies:
+        return jsonify({'error': 'Lobby not found'})
+
+    return jsonify({'players': lobbies[lobbyCode]})
+
 @app.route('/delete-lobby/<int:lobbyCode>', methods=['POST'])
 def delete_lobby(lobbyCode):
     if lobbyCode not in lobbies:
