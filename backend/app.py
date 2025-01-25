@@ -1,11 +1,15 @@
 import random
 import time
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, render_template, request, jsonify # type: ignore
+from flask_cors import CORS # type: ignore
+
 import subprocess
+
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 CORS(app)
+socketio = SocketIO(app)
 
 lobbies = {}
 lobbyEndTimes = {}
@@ -28,6 +32,20 @@ def join_lobby(lobbyCode):
         return jsonify({'error': 'Lobby not found'})
 
     lobbies[lobbyCode].append(username)
+    return jsonify({'success': True})
+
+@app.route('/leave-lobby/<int:lobbyCode>', methods=['POST'])
+def leave_lobby(lobbyCode):
+    data = request.get_json()
+    username = data.get('username', '')
+
+    if lobbyCode not in lobbies:
+        return jsonify({'error': 'Lobby not found'})
+    
+    if username not in lobbies[lobbyCode]:
+        return jsonify({'error': 'User not in lobby'})
+
+    lobbies[lobbyCode].remove(username)
     return jsonify({'success': True})
 
 @app.route('/get-lobby-player-count/<int:lobbyCode>', methods=['GET'])
@@ -54,15 +72,14 @@ def start_game(lobbyCode):
     if lobbyCode not in lobbies:
         return jsonify({'error': 'Lobby not found'})
     
-    time = 10
+    # TODO: Grab code from database
+    competitionCode = 'print("Hello World")'
+    
+    time = 5
 
     lobbyEndTimes[lobbyCode] = time.time() + time
 
-    # TODO: Grab code from database
-    X = 'print("Hello World")'
-
-    # TODO: Send code to all players in lobby
-    # for player in lobbies[lobbyCode]:
+    socketio.emit('start-game', {'code': competitionCode, 'time': time}, room=lobbyCode)
 
     return jsonify({'success': True, 'time': time})
 
@@ -83,3 +100,4 @@ def start_game(lobbyCode):
 
 if __name__ == '__main__':
     app.run(debug=True)
+    socketio.run(app)
