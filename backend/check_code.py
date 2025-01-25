@@ -35,7 +35,7 @@ test1_output = ["skitree", "biztree", "green tree", "pine tree", "Chirstmas tree
 test1 = """
 def hello(i):
     i = i + "tree"
-    l
+    
     return i
 
 """
@@ -78,31 +78,33 @@ def check_code(code :str, input_arr :list, expected_output_arr: list):
         results.errors = 1
         return results
     exec(code)
+
     for i in range(len(input_arr)):
-        test_line = create_test_line(function_name, input_arr[i])
         eval_code_rd_output = io.StringIO()
         eval_code_rd_err = io.StringIO()
         original_stdout = sys.stdout
         original_error = sys.stderr
         sys.stdout = eval_code_rd_output
         sys.stderr = eval_code_rd_err
+
+        test_line = create_test_line(function_name, input_arr[i])
         try:
             exec(test_line)
             printed_output = eval_code_rd_output.getvalue()
-            printed_error = eval_code_rd_err.getvalue()
-            expected_output_arr[i] = expected_output_arr[i]
+            printed_output = printed_output.strip('\n')
             if (printed_output == expected_output_arr[i]):
                 results.add_outcome(True, printed_output, expected_output_arr[i])
             else:
                 results.add_outcome(False, printed_output, expected_output_arr[i])
-        except Exception as e:
-            print("ERROR")
+        except Exception as err:
+            print(f"ERROR: {err}",file=sys.stderr)
             printed_output = eval_code_rd_output.getvalue()
             printed_error = eval_code_rd_err.getvalue()
-            sys.stdout = original_stdout
-            sys.stderr = original_error
-            print(printed_error)
-            results.add_outcome(False, printed_error, expected_output_arr[i])
+            results.add_outcome(False, printed_output + printed_error, expected_output_arr[i])
+        
+        sys.stdout = original_stdout
+        sys.stderr = original_error
+        
         
     return results    
     
