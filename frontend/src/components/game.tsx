@@ -60,6 +60,7 @@ const Game = ({
   const [place, setPlace] = useState<number | null>(null);
   const [passed, setPassed] = useState(false);
   const [timeoutOpen, setTimeoutOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const interval = useRef<NodeJS.Timeout>();
 
@@ -101,7 +102,9 @@ const Game = ({
   };
   
   const handleStart = async () => {
+    setIsGenerating(true);
     const startRes = await fetch(`${baseBackendUrl}/start-game/${gameId}`, { method: 'POST' });
+    setIsGenerating(false);
   };
 
   const fetchPlayers = async () => {
@@ -232,7 +235,7 @@ const Game = ({
 
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
-      {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} players={players} />}
+      {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} players={players} isLoading={isGenerating} />}
       <Dialog open={congratsOpen} onOpenChange={(open) => setCongratsOpen(open)}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

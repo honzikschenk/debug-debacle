@@ -1,4 +1,4 @@
-import { Link, User } from "lucide-react";
+import { Link, Loader2, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast"
 import { baseFrontendUrl } from "@/lib/constants";
@@ -7,9 +7,10 @@ interface LobbyProps {
   id: number;
   onStart: () => void;
   players: string[];
+  isLoading: boolean;
 }
 
-const Lobby = ({ id, onStart, players }: LobbyProps) => {
+const Lobby = ({ id, onStart, players, isLoading }: LobbyProps) => {
 
   const { toast } = useToast();
 
@@ -32,6 +33,7 @@ const Lobby = ({ id, onStart, players }: LobbyProps) => {
         <Button onClick={onStart} variant="secondary" className="flex items-center gap-x-2 bg-green-500 hover:bg-green-600">
           Start
         </Button>
+        {isLoading && <Loader2 className="animate-spin" />}
       </div>
     </div>
   )
