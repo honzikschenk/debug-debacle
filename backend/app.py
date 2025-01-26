@@ -98,7 +98,7 @@ def start_game(lobbyCode):
         return jsonify({'error': 'Lobby not found'})
     
     # TODO: Grab code from database
-    competitionCode = 'print("Hello World")'
+    competitionCode = 'print("Hello World")\nprint("Yellow Morld")'
     
     duration = 300
 
