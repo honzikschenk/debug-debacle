@@ -3,6 +3,7 @@ import time
 from flask import Flask, render_template, request, jsonify # type: ignore
 from flask_cors import CORS # type: ignore
 from check_code import check_code, parse_testcode_data
+from vetted_problem import problems
 
 import subprocess
 
@@ -26,51 +27,6 @@ lobbyEndTimes = {}
 lobbyProblemIndices = {}
 
 sample = {'code': "def find_winner(board):\n    for i in range(3):\n        if board[i][0] == board[i][1] == board[i][2] != '-':\n            return board[i][0]\n        elif board[0][i] == board[1][i] == board[2][i] != '-':\n            return board[0][i]\n    if board[0][0] == board[1][1] == board[2][2] != '-':\n        return board[0][0]\n    elif board[0][2] == board[1][1] == board[2][0] != '-':\n        return board[2][0]\n    if '-' not in board:\n        return 'Draw'\n    return 'No Winner'", 'description': 'The code block determines the winner (or a draw) of a tic-tac-toe game based on the given board.', 'testCases': ['[', "[['X', 'X', 'X', '-', '-', '-', '-', '-', '-'], 'X'],", "[['O', 'O', 'O', '-', '-', '-', '-', '-', '-'], 'O'],", "[['X', 'O', 'X', 'O', 'X', 'O', 'O', 'X', 'X'], 'Draw'],", "[['-', '-', '-', '-', '-', '-', '-', '-', '-'], 'No Winner'],", "[['X', 'O', '-', 'O', 'X', '-', 'X', '-', '-'], 'X']", ']']}
-
-problems = [
-    {
-        "code": """def twoSum(arr: tuple[list[int], int]) -> list[int]:
-    # Finds the indices of two numbers in nums that add up to target
-    # The 1st element of arr is nums and the 2nd element of arr is target
-
-    complements = dict()
-
-    nums, target = arr
-
-    for i, num in enumerate(nums):
-        if num in complements:
-            return [complements[num], i]
-        complements[num] = i""",
-        "description": "",
-        "testCases": ["[[[2, 7, 11, 15], 9], [[3, 2, 4], 6], [[3, 3], 6]]", "[[0, 1], [1, 2], [0, 1]]"]
-    },
-    {
-        "code": """def isPalindrome(x: int) -> bool:
-    # Checks whether x is a palindrome
-    return x == x[::-1]""",
-        "description": "",
-        "testCases": ["[121, -121, 10]", "[True, False, False]"]
-    },
-    {
-        "code": """def lengthOfLongestSubstring(s: str) -> int:
-    # Finds the length of the longest substring without repeating characters
-    substring_start = 0
-    chars = dict()
-    max_length = 0
-
-    for i, ch in enumerate(s):
-        if ch in chars:
-            substring_start = max(substring_start, chars[ch] + 1)
-        chars[ch] = i
-        
-        length = i - substring_start
-        max_length = max(max_length, length)
-    
-    return max_length""",
-        "description": "",
-        "testCases": ['["abcabcbb", "bbbbb", "pwwkew"]', "[3, 1, 3]"]
-    }
-]
 
 @app.route('/create-lobby', methods=['POST'])
 def create_lobby():
