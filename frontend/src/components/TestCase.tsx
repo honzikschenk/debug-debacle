@@ -4,19 +4,21 @@ import { Badge } from "./ui/badge";
 import { CheckCircle, XCircle } from "lucide-react";
 
 interface TestCaseProps {
-  input?: string;
-  expectedOutput?: string;
-  actualOutput?: string;
-  passed?: boolean;
-  index?: number;
+  // input?: string;
+  // expectedOutput?: string;
+  // actualOutput?: string;
+  passed: boolean;
+  // index?: number;
+  name: string;
 }
 
 const TestCase = ({
-  input = 'print("Hello World")',
-  expectedOutput = "Hello World",
-  actualOutput = "Hello World",
-  passed = true,
-  index = 1,
+  // input = 'print("Hello World")',
+  // expectedOutput = "Hello World",
+  // actualOutput = "Hello World",
+  passed,
+  // index = 1,
+  name
 }: TestCaseProps) => {
   return (
     <Card className="p-4 mb-4 bg-slate-950 border-slate-800">
@@ -24,7 +26,7 @@ const TestCase = ({
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <h3 className="text-sm font-medium text-slate-200">
-              Test Case {index}
+              {name}
             </h3>
             <Badge
               variant={passed ? "default" : "destructive"}
@@ -39,7 +41,7 @@ const TestCase = ({
             </Badge>
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <div>
               <p className="text-xs text-slate-400">Input:</p>
               <pre className="mt-1 p-2 rounded bg-slate-900 text-sm font-mono text-slate-300">
@@ -62,7 +64,7 @@ const TestCase = ({
                 </pre>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </Card>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -26,36 +26,43 @@ interface GameProps {
   passedTests?: number;
 }
 
+type PlayerScores = {
+  username: string;
+  passed: boolean;
+};
+
 const Game = ({
-  initialCode = '# Write your Python code here\nprint("Hello World!")',
-  testCases = [
-    {
-      input: 'print("Hello World")',
-      expectedOutput: "Hello World",
-      passed: true,
-    },
-    {
-      input: "print(2 + 2)",
-      expectedOutput: "4",
-      actualOutput: "5",
-      passed: false,
-    },
-    {
-      input: 'print("Python")',
-      expectedOutput: "Python",
-      passed: true,
-    },
-  ],
-  score = 66,
+  initialCode = 'def Fibonacci(n):\n  # Check if input is 0 then it will\n  # print incorrect input\n  if n < 0:\n    print("Incorrect input")\n  # Check if n is 0\n  # then it will return 0\n  elif n == 0:\n    return 0\n\n  # Check if n is 1,2\n  # it will return 1\n  elif n == 1 or n == 2:\n    return 1\n\n  else:\n    return Fibonacci(n-1) + Fibonacci(n-2)\n\n  # Driver Program\n  print(Fibonacci(9))\n',
   totalTests = 3,
   passedTests = 2,
 }: GameProps) => {
   const [code, setCode] = useState(initialCode);
-  const [time, setTime] = useState(500);
+  const [time, setTime] = useState(0);
+  const [maxTime, setMaxTime] = useState(1);
   const [playerCount, setPlayerCount] = useState(0);
   const [started, setStarted] = useState(false);
   const [joinedSocket, setJoinedSocket] = useState(false);
   const [players, setPlayers] = useState<string[]>([]);
+  const [score, setScore] = useState(0);
+  const [playerScores, setPlayerScores] = useState<PlayerScores[]>([]);
+
+  const interval = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    function handleTimer() {
+      interval.current = setInterval(() => {
+        setTime((prev) => prev - 1);
+      }, 1000);
+    }
+
+    if(time <= 0 && interval.current) {
+      submitCode();
+      clearInterval(interval.current);
+    }
+    if(time === maxTime) {
+      handleTimer();
+    }
+  }, [time, maxTime]);
 
   const { gameId } = useParams();
 
@@ -73,7 +80,7 @@ const Game = ({
   };
 
   const handleRunTests = () => {
-    console.log("Running tests...");
+    submitCode();
   };
 
   const handleStart = async () => {
@@ -87,9 +94,18 @@ const Game = ({
     setPlayers(players);
   };
 
+  const submitCode = async () => {
+    const submissionRes = await fetch(`${baseBackendUrl}/submission/${gameId}`, {
+      method: 'POST',
+      body: JSON.stringify({ username: user.name, submission: code }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  };
+
   useEffect(() => {
     fetchPlayers();
-    setInterval(() => setTime((prev) => prev - 1), 1000);
   }, []);
 
   useEffect(() => {
@@ -102,11 +118,17 @@ const Game = ({
       socket.on('start-game', (msg) => {
         setStarted(true);
         setCode(msg.code);
+
         setTime(msg.time);
+        setMaxTime(msg.time);
       })
 
       socket.on('joined_lobby', (msg) => {
         setPlayers((prev) => [...prev, msg])
+      });
+
+      socket.on('submission', (msg) => {
+        setPlayerScores([...playerScores.filter((player) => player.username !== msg.username), { username: msg.username, passed: msg.score[1] / msg.score[0] === 1}]);
       });
 
       setPlayerCount(playerCount + 1);
@@ -128,11 +150,12 @@ const Game = ({
 
         <ResizablePanel defaultSize={50} minSize={30}>
           <TestRunner
-            testCases={testCases}
+            // testCases={playerSocres}
             onRunTests={handleRunTests}
             score={score}
             totalTests={totalTests}
             passedTests={passedTests}
+            players={players.filter((player) => player !== user.name)}
           />
         </ResizablePanel>
       </ResizablePanelGroup>
