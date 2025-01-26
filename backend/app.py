@@ -125,6 +125,9 @@ def submission(lobbyCode):
     if time.time() > lobbyEndTimes[lobbyCode] + 500:
         return jsonify({'error': 'Time is up!'})
     
+
+    
+    #========================================================================================================
     # TODO: Check submission
     code = submission
 
@@ -138,6 +141,7 @@ def submission(lobbyCode):
 
     # TODO: Compare output with test cases from sample
     score = (5, 5)
+    #========================================================================================================
 
     socketio.emit('submission', {'username': username, 'score': score}, to=lobbyCode)
 
