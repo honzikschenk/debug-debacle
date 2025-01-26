@@ -30,10 +30,11 @@ def create_lobby():
 def handle_join_lobby(data):
     lobbyCode = data.get('lobbyCode')
     username = data.get('username')
+    print(data)
+    print("Hello World!")
 
     #join_room(lobbyCode)
     emit('joined_lobby', username + ' has entered the room.', to=lobbyCode)
-
     if lobbyCode not in lobbies:
         emit('error', {'error': 'Lobby not found'})
         return
@@ -51,6 +52,7 @@ def handle_join_lobby(data):
 def handle_leave_lobby(data):
     lobbyCode = data.get('lobbyCode')
     username = data.get('username')
+    #print(data)
 
     if lobbyCode not in lobbies:
         emit('error', {'error': 'Lobby not found'})
@@ -77,6 +79,8 @@ def get_lobby_info(lobbyCode):
 
 @app.route('/get-lobby-players/<int:lobbyCode>', methods=['GET'])
 def get_lobby_players(lobbyCode):
+    print(lobbyCode)
+    print(lobbies)
     if lobbyCode not in lobbies:
         return jsonify({'error': 'Lobby not found'})
 
@@ -102,6 +106,7 @@ def start_game(lobbyCode):
     
     # TODO: Grab code from database
     competitionCode = sample["code"]
+
     
     duration = 300 # 300
 
