@@ -80,7 +80,7 @@ const Game = ({
   };
 
   const handleRunTests = () => {
-    console.log("Running tests...");
+    submitCode();
   };
 
   const handleStart = async () => {

@@ -14,6 +14,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 lobbies = {}
 lobbyEndTimes = {}
 
+sample = {'code': "def find_winner(board):\n    for i in range(3):\n        if board[i][0] == board[i][1] == board[i][2] != '-':\n            return board[i][0]\n        elif board[0][i] == board[1][i] == board[2][i] != '-':\n            return board[0][i]\n    if board[0][0] == board[1][1] == board[2][2] != '-':\n        return board[0][0]\n    elif board[0][2] == board[1][1] == board[2][0] != '-':\n        return board[2][0]\n    if '-' not in board:\n        return 'Draw'\n    return 'No Winner'", 'description': 'The code block determines the winner (or a draw) of a tic-tac-toe game based on the given board.', 'testCases': ['[', "[['X', 'X', 'X', '-', '-', '-', '-', '-', '-'], 'X'],", "[['O', 'O', 'O', '-', '-', '-', '-', '-', '-'], 'O'],", "[['X', 'O', 'X', 'O', 'X', 'O', 'O', 'X', 'X'], 'Draw'],", "[['-', '-', '-', '-', '-', '-', '-', '-', '-'], 'No Winner'],", "[['X', 'O', '-', 'O', 'X', '-', 'X', '-', '-'], 'X']", ']']}
+
 @app.route('/create-lobby', methods=['POST'])
 def create_lobby():
     lobbyCode = random.randint(1000, 9999)
@@ -98,7 +100,7 @@ def start_game(lobbyCode):
         return jsonify({'error': 'Lobby not found'})
     
     # TODO: Grab code from database
-    competitionCode = 'print("Hello World")\nprint("Yellow Morld")'
+    competitionCode = sample["code"]
     
     duration = 5 # 300
 
@@ -120,13 +122,24 @@ def submission(lobbyCode):
     if username not in lobbies[lobbyCode]:
         return jsonify({'error': 'User not in lobby'})
 
-    if time.time() > lobbyEndTimes[lobbyCode] + 5:
+    if time.time() > lobbyEndTimes[lobbyCode] + 500:
         return jsonify({'error': 'Time is up!'})
     
     # TODO: Check submission
-    score = (5, 7)
+    code = submission
 
-    socketio.emit('submission', {'username': username, 'result': score}, to=lobbyCode)
+    try:
+        result = subprocess.run(['python', '-c', code], capture_output=True, text=True, check=True)
+        output = result.stdout
+        error = result.stderr
+    except subprocess.CalledProcessError as e:
+        output = e.stdout
+        error = e.stderr
+
+    # TODO: Compare output with test cases from sample
+    score = (5, 5)
+
+    socketio.emit('submission', {'username': username, 'score': score}, to=lobbyCode)
 
     return jsonify({'success': True})
 
