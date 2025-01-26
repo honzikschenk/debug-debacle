@@ -2,6 +2,7 @@ import random
 import time
 from flask import Flask, render_template, request, jsonify # type: ignore
 from flask_cors import CORS # type: ignore
+from check_code import check_code, parse_testcode_data
 
 import subprocess
 
@@ -131,16 +132,28 @@ def submission(lobbyCode):
     # TODO: Check submission
     code = submission
 
-    try:
-        result = subprocess.run(['python', '-c', code], capture_output=True, text=True, check=True)
-        output = result.stdout
-        error = result.stderr
-    except subprocess.CalledProcessError as e:
-        output = e.stdout
-        error = e.stderr
+    raw_data = {'code': 'def find_missing_number(numbers):\n    expected_sum = sum(range(1, len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], [1, 2, 3, 4, 5], [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]', '[5, 10, 6, 55, 12]']}
+    
+    given_input, given_output, parse_error = parse_testcode_data(raw_data)
+    result = check_code(code, given_input, given_output)
+    if (parse_error):
+        result.errors = 1
+    
+    #try:
+    #    result = subprocess.run(['python', '-c', code], capture_output=True, text=True, check=True)
+    #    output = result.stdout
+    #    error = result.stderr
+    #except subprocess.CalledProcessError as e:
+    #    output = e.stdout
+    #    error = e.stderr
 
     # TODO: Compare output with test cases from sample
-    score = (5, 5)
+    if (result.errors == 1):
+        print("CRITICAL SERVER ERROR")
+    elif (result.errors == 2):
+        print("UNABLE TO FIND FUNCTION DEFINITION")
+    else:
+        score = result.get_overall_state()
     #========================================================================================================
     socketio.emit('submission', {'username': username, 'score': score}, to=str(lobbyCode))
 

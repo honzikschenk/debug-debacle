@@ -1,0 +1,18 @@
+REQUIREMENTS FOR AI CODE GENERATION:
+THE TESTING FUNCTION IS ABLE TO CORRECTLY TEST CODE IF THE FOLLOWING CONDITIONS ARE MET:
+1. The AI reponse is in format of (code : "_", description : "_", testcases: "_")
+2. Text cases section is arranged internally as | testcases : [[array of inputs], [array of outputs]] |
+3. The array of inputs/outputs internally structed as [testcase1, testcase2, testcase3, testcase4, testcase5], with each
+    testcase being a self-contained array,list,dictionary, or combination of seperated by commas
+4. The only quotation marks to be used in the sub-array are to surround the testcases. i.e ("Im hungry" NOT "I'm hungry")
+    EXAMPLES OF VALID ARRAYS:
+        [[1,2,3,4], [4,5,6], [7,8], [11,15], []]
+        [ [[1,2],[3,4]],  [[5,6],[7]],  [[],[]],  [[13,14,15],[16,16]],  [[17,30],[]] ]
+        If the array returned is in format:
+        [True, False, True, False, True] <--BOOLEANS
+        ["True", "False", "True", "False", "True"] <--Strings
+        ["bear with' me", "To be con'tinued", "yes", "no", "why"] <--INVALID_INPUT
+        ["bear with me", "To be continued", "yes", "no", "why"] <--VALID_INPUT
+        ["peter piper picked", "a peck of", "pickled peppers how", "many pickled peppers", "did peter pick"] <--VALID_INPUT
+        ["peter piper' picked", "a peck of", "pickled pepper"s how", "many pickled pepper's", "did peter pick"] <--INVALID_INPUT
+5. Incorrect arrays will likely lead to error
