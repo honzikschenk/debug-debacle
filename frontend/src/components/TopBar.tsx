@@ -33,7 +33,7 @@ const TopBar = ({ time, playerCount, lobbyCode, leaveGame }: TopBarProps) => {
         </div>
         <div className="flex items-center gap-x-2">
           <Gamepad2 />
-          LeetCode
+          Game Code: {lobbyCode}
         </div>
         <div className="flex items-center gap-x-2">
           <Timer />
