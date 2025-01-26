@@ -151,7 +151,7 @@ def delete_lobby(lobbyCode):
 
 @app.route('/get-lobbies', methods=['GET'])
 def get_lobbies():
-    return jsonify({'lobbies': list(lobbies.keys())})
+    return jsonify({'lobbies': [key for key in lobbies.keys() if key not in lobbyEndTimes]})
 
 @app.route('/start-game/<int:lobbyCode>', methods=['POST'])
 def start_game(lobbyCode):
