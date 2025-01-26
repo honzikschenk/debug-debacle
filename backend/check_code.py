@@ -132,7 +132,8 @@ def check_code(code :str, input_arr, expected_output_arr):
     if function_name == "":
         results.errors = 2
         return results
-    exec(code)
+    shared_code = {}
+    exec(code, shared_code)
 
     for i in range(len(input_arr)):
         eval_code_rd_output = io.StringIO()
@@ -144,7 +145,7 @@ def check_code(code :str, input_arr, expected_output_arr):
 
         test_line = create_test_line(function_name, input_arr[i])
         try:
-            exec(test_line)
+            exec(test_line, shared_code)
             printed_output = eval_code_rd_output.getvalue()
             printed_output = printed_output.strip('\n')
             if (printed_output == expected_output_arr[i]):
