@@ -1,13 +1,26 @@
 import Editor, { OnMount, useMonaco } from '@monaco-editor/react';
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card } from "./ui/card";
 import "@/lib/prism-theme.css";
+
+import githubDark from '../themes/github-dark.json';
+import nightOwl from '../themes/night-owl.json';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Button } from './ui/button';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
+import { cn } from '@/lib/utils';
 
 interface CodeEditorProps {
   code?: string;
   onChange?: (code: string) => void;
   onRun?: () => void;
 }
+
+const themes = {
+  'Night Owl': nightOwl,
+  'GitHub Dark': githubDark
+};
 
 const CodeEditor = ({
   code = '# Write your Python code here\nprint("Hello World!")',
@@ -20,16 +33,10 @@ const CodeEditor = ({
 
   useEffect(() => {
     if (!monaco) return;
-    monaco.editor.defineTheme('my-theme', {
-      base: 'vs-dark',
-      inherit: true,
-      rules: [],
-      colors: {
-        'editor.background': '#0f172a',
-      }
-    });
 
-    monaco.editor.setTheme('my-theme');
+    for (const theme of Object.keys(themes)) {
+      monaco.editor.defineTheme(theme.replace(' ', '-').toLowerCase(), themes[theme]);
+    }
   }, [monaco]);
 
   
@@ -78,19 +85,69 @@ const CodeEditor = ({
   //   editorRef.current = editor;
   // }
 
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState("Night Owl")
+
+  useEffect(() => {
+    if (monaco) {
+      monaco.editor.setTheme(value.toLowerCase().replace(' ', '-'));
+    }
+  }, [value, monaco]);
+
   return (
     <Card className="h-full flex flex-col bg-slate-950 border-slate-800">
       <div className="flex items-center justify-between p-4 border-b border-slate-800">
         <h2 className="text-lg font-semibold text-slate-100">
           Code Editor
         </h2>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="default"
+              role="combobox"
+              aria-expanded={open}
+              className="w-[200px] justify-between"
+            >
+              {Object.keys(themes).find((framework) => framework === value)}
+              <ChevronsUpDown className="opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[200px] p-0">
+            <Command>
+              <CommandInput placeholder="Search framework..." className="h-9" />
+              <CommandList>
+                <CommandEmpty>No framework found.</CommandEmpty>
+                <CommandGroup>
+                  {Object.keys(themes).map((framework) => (
+                    <CommandItem
+                      key={framework}
+                      value={framework}
+                      onSelect={(currentValue) => {
+                        setValue(currentValue === value ? "" : currentValue)
+                        setOpen(false)
+                      }}
+                    >
+                      {framework}
+                      <Check
+                        className={cn(
+                          "ml-auto",
+                          value === framework ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="flex-1 p-4">
         <div className="relative h-full">
         <Editor
           defaultLanguage="python"
           // defaultValue="# some comment"
-          theme="my-theme"
+          theme="night-owl"
           value={code}
           onChange={onChange}
           // onMount={handleEditorDidMount}

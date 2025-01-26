@@ -35,12 +35,13 @@ def handle_join_lobby(data):
         emit('error', {'error': 'Lobby not found'})
         return
     
+    join_room(str(lobbyCode))
+    
     if username in lobbies[lobbyCode]:
         emit('error', {'error': 'User already in lobby'})
         return
 
     lobbies[lobbyCode].append(username)
-    join_room(str(lobbyCode))
     emit('joined_lobby', username, to=str(lobbyCode))
 
 @socketio.on('leave_lobby')
