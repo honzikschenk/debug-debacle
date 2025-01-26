@@ -189,6 +189,11 @@ const Game = ({
         }
       });
 
+      socket.emit('join_lobby', {
+        lobbyCode: parseInt(gameId),
+        username: user.name
+      });
+
       setJoinedSocket(true);
     }
     else {

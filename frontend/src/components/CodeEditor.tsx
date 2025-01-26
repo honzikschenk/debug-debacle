@@ -120,7 +120,7 @@ const CodeEditor = ({
             <Command>
               <CommandInput placeholder="Search theme..." className="h-9" />
               <CommandList>
-                <CommandEmpty>No framework found.</CommandEmpty>
+                <CommandEmpty>No theme found.</CommandEmpty>
                 <CommandGroup>
                   {Object.keys(themes).map((framework) => (
                     <CommandItem
