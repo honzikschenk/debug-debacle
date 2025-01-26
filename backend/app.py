@@ -31,8 +31,8 @@ def handle_join_lobby(data):
     lobbyCode = data.get('lobbyCode')
     username = data.get('username')
 
-    # join_room(lobbyCode)
-    # emit('joined_lobby', username + ' has entered the room.', to=lobbyCode)
+    #join_room(lobbyCode)
+    emit('joined_lobby', username + ' has entered the room.', to=lobbyCode)
 
     if lobbyCode not in lobbies:
         emit('error', {'error': 'Lobby not found'})
