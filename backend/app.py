@@ -7,6 +7,15 @@ from check_code import check_code, parse_testcode_data
 import subprocess
 
 from flask_socketio import SocketIO, join_room, leave_room, emit, send # type: ignore
+from dotenv import load_dotenv
+from supabase import Client, create_client
+import os
+
+load_dotenv()
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
 app = Flask(__name__)
 CORS(app)
@@ -188,6 +197,8 @@ def submission(lobbyCode):
     if (parse_error):
         result.errors = 1
     
+    supabase.table("scores").insert({ "name": username, "seconds": round(lobbyEndTimes[lobbyCode] - time.time()) }).execute()
+    
     #try:
     #    result = subprocess.run(['python', '-c', code], capture_output=True, text=True, check=True)
     #    output = result.stdout
@@ -208,6 +219,11 @@ def submission(lobbyCode):
     socketio.emit('submission', {'username': username, 'score': score}, to=str(lobbyCode))
 
     return jsonify({'success': score[0] == score[1]})
+
+@app.route('/leaderboard', methods=['GET'])
+def leaderboard():
+    response = supabase.table("scores").select("*").limit(10).order("seconds", desc=True).execute().data
+    return jsonify({'scores': [{"name": row["name"], "seconds": row["seconds"]} for row in response]})
 
 # @app.route('/execute', methods=['POST'])
 # def execute_code():

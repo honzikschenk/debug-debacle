@@ -65,6 +65,9 @@ const Navbar = ({}: NavbarProps) => {
         <NavLink className="font-mono font-bold text-xl mr-5" to="/">
           Debug Debacle
         </NavLink>
+        <NavLink to="/leaderboard">
+          Leaderboard
+        </NavLink>
       </div>
       <div className="flex items-center gap-x-2">
         <Profile />
