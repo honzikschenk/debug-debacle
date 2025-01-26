@@ -84,7 +84,7 @@ def check_validity(arr, origlen :int):
             return True
     return False
 
-def parse_testcode_data(rawdata):
+def parse_testcode_data(rawdata : dict):
     raw_input, raw_output = "", ""
     input_arr, expected_output_arr = [], []
     error = False
@@ -130,7 +130,7 @@ def check_code(code :str, input_arr, expected_output_arr):
 
     function_name = find_function_name(code)
     if function_name == "":
-        results.errors = 1
+        results.errors = 2
         return results
     exec(code)
 
@@ -202,12 +202,12 @@ test1_input, test1_output, err = parse_testcode_data({'code': 'def find_missing_
 results = check_code('def find_missing_number(numbers):\n    expected_sum = sum(range(numbers[0], numbers[0]+ len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', test1_input, test1_output)
 print(results.get_dump())
 print(err)
+
 test1_input, test1_output, err = parse_testcode_data({'code': 'def find_missing_number(nums):\n    n = len(nums) \n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(nums)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [0, 1, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 6]]', '[5, 0, 10, 5, 6]']}) 
 results = check_code('def find_missing_number(nums):\n    n = len(nums) \n    expected_sum = sum(range(nums[0], nums[0]+ len(nums) + 1))\n    actual_sum = sum(nums)\n    return expected_sum - actual_sum', test1_input, test1_output)
 print(results.get_dump())
+
 test1_input, test1_output, err = parse_testcode_data({'code': "def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1][:1]", 'description': 'Checks if a given string is a palindrome, ignoring non-alphanumeric characters and case.', 'testCases': ["['racecar', 'A man a plan a canal Panama', 'Was it a car or a cat I saw?', 'Hello world', 'Madam, in Eden, I'm Adam']", '[True, True, True, False, True]']})
-print(test1_input)
-print(err)
 results = check_code("def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1][:1]", test1_input, test1_output)
 print(results.get_dump())
 print(err)
