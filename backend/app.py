@@ -66,7 +66,7 @@ def handle_leave_lobby(data):
         del lobbies[lobbyCode]
 
     leave_room(lobbyCode)
-    emit('left_lobby', username + ' has left the room.', to=lobbyCode)
+    emit('left_lobby', username + ' has left the room.', to=str(lobbyCode))
 
 @app.route('/get-lobby-player-count/<int:lobbyCode>', methods=['GET'])
 def get_lobby_info(lobbyCode):
