@@ -222,7 +222,7 @@ const Game = ({
           setPassedPlayers((prev) => [...prev, msg.username]);
         }
 
-        if(passedPlayers.length === players.length) {
+        if(passedPlayers.length === players.length + 1) {
           fetch(`${baseBackendUrl}/end-game/${gameId}`, { method: 'POST' });
         }
       });

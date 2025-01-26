@@ -4,6 +4,9 @@ from flask import Flask, render_template, request, jsonify # type: ignore
 from flask_cors import CORS # type: ignore
 from check_code import check_code, parse_testcode_data
 from vetted_problem import problems
+import os
+
+from gumloop import GumloopClient # type: ignore
 
 import subprocess
 
@@ -13,6 +16,11 @@ from supabase import Client, create_client # type: ignore
 import os
 
 load_dotenv()
+
+client = GumloopClient(
+    api_key=os.environ.get("GUMLOOP_API_KEY"),
+    user_id=os.environ.get("GUMLOOP_USER_ID")
+)
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
@@ -25,6 +33,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 lobbies = {}
 lobbyEndTimes = {}
 lobbyProblemIndices = {}
+lobbyRawData = {}
 
 sample = {'code': "def find_winner(board):\n    for i in range(3):\n        if board[i][0] == board[i][1] == board[i][2] != '-':\n            return board[i][0]\n        elif board[0][i] == board[1][i] == board[2][i] != '-':\n            return board[0][i]\n    if board[0][0] == board[1][1] == board[2][2] != '-':\n        return board[0][0]\n    elif board[0][2] == board[1][1] == board[2][0] != '-':\n        return board[2][0]\n    if '-' not in board:\n        return 'Draw'\n    return 'No Winner'", 'description': 'The code block determines the winner (or a draw) of a tic-tac-toe game based on the given board.', 'testCases': ['[', "[['X', 'X', 'X', '-', '-', '-', '-', '-', '-'], 'X'],", "[['O', 'O', 'O', '-', '-', '-', '-', '-', '-'], 'O'],", "[['X', 'O', 'X', 'O', 'X', 'O', 'O', 'X', 'X'], 'Draw'],", "[['-', '-', '-', '-', '-', '-', '-', '-', '-'], 'No Winner'],", "[['X', 'O', '-', 'O', 'X', '-', 'X', '-', '-'], 'X']", ']']}
 
@@ -79,6 +88,7 @@ def handle_leave_lobby(data):
         del lobbies[lobbyCode]
         del lobbyEndTimes[lobbyCode]
         del lobbyProblemIndices[lobbyCode]
+        del lobbyRawData[lobbyCode]
 
     leave_room(lobbyCode)
     emit('left_lobby', username, to=str(lobbyCode))
@@ -109,6 +119,7 @@ def delete_lobby(lobbyCode):
     del lobbies[lobbyCode]
     del lobbyEndTimes[lobbyCode]
     del lobbyProblemIndices[lobbyCode]
+    del lobbyRawData[lobbyCode]
     return jsonify({'success': True})
 
 @app.route('/get-lobbies', methods=['GET'])
@@ -122,13 +133,31 @@ def start_game(lobbyCode):
         return jsonify({'error': 'Lobby not found'})
     
     # TODO: Grab code from database
-    # competitionCode = sample["code"]
+    # outputCode = client.run_flow(
+    #     flow_id="jyTN43gYcSfcSJxJ4Y8cdn",
+    #     inputs={
+    #         "prompt": "Largest Triangle Area"
+    #     }
+    # )
+
+    # while(parse_testcode_data(outputCode)[2]):
+    #     outputCode = client.run_flow(
+    #         flow_id="jyTN43gYcSfcSJxJ4Y8cdn",
+    #         inputs={
+    #             "prompt": "Largest Triangle Area"
+    #         }
+    #     )
+
+    outputCode = problems[random.randint(0, len(problems) - 1)]
+    
+    competitionCode = outputCode["code"] + "\n# " + outputCode["description"]
+    lobbyRawData[lobbyCode] = outputCode
     
     duration = 240 # 300
 
     lobbyEndTimes[lobbyCode] = time.time() + duration
     lobbyProblemIndices[lobbyCode] = random.randint(0, len(problems) - 1)
-    competitionCode = problems[lobbyProblemIndices[lobbyCode]]["code"]
+    # competitionCode = problems[lobbyProblemIndices[lobbyCode]]["code"]
 
     socketio.emit('start-game', {'code': competitionCode, 'time': duration}, to=str(lobbyCode))
 
@@ -169,7 +198,8 @@ def submission(lobbyCode):
     code = submission
     #raw_data = {'code': 'def find_missing_number(numbers):\n    expected_sum = sum(range(1, len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], [1, 2, 3, 4, 5], [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]', '[5, 10, 6, 55, 12]']}
     # raw_data = {'code': 'def find_missing_number(numbers):\n    expected_sum = sum(range(1, len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [9, 11, 12, 13, 14, 15, 16, 17, 18, 19], [1, 2, 3, 4, 5, 7]]', '[5, 10, 6]']}
-    raw_data = problems[lobbyProblemIndices[lobbyCode]]
+    # raw_data = problems[lobbyProblemIndices[lobbyCode]]
+    raw_data = lobbyRawData[lobbyCode]
 
     given_input, given_output, parse_error = parse_testcode_data(raw_data)
     result = check_code(code, given_input, given_output)
@@ -191,8 +221,7 @@ def submission(lobbyCode):
         print("CRITICAL SERVER ERROR")
     elif (result.errors == 2):
         print("UNABLE TO FIND FUNCTION DEFINITION")
-    else:
-        score = result.get_overall_state()
+    score = result.get_overall_state()
     print(result.get_dump())
     #========================================================================================================
 
