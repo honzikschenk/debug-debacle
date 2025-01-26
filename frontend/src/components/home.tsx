@@ -8,6 +8,9 @@ import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { baseBackendUrl } from "@/lib/constants";
 import { useAuth0 } from "@auth0/auth0-react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 type Lobby = {
   id: number,
@@ -17,10 +20,11 @@ type Lobby = {
 const Home = () => {
   const { user } = useAuth0();
 
+
+
   const createLobby = async () => {
     const createRes = await fetch(`${baseBackendUrl}/create-lobby`, { method: 'POST' });
     const createData = await createRes.json();
-
     navigate(`/game/${createData.lobbyCode}`);
   };
 
@@ -64,6 +68,18 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+  const handleNotAuthenticated = () => {
+    toast.success('You need to log in!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
+
   useEffect(() => {
     fetchLobbies();
   }, []);
@@ -75,7 +91,6 @@ const Home = () => {
         <h1 className="text-7xl">Debug Debacle</h1>
         <p className="mt-5 text-lg">Compete against others to fix bugs in code.</p>
         <Button onClick={createLobby} variant="secondary" className="mt-5">Create a Lobby</Button>
-
         {lobbies.length > 0 && (
           <>
             <p className="text-slate-500 my-2">or</p>
