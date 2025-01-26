@@ -143,7 +143,7 @@ def get_lobby_players(lobbyCode):
     if lobbyCode in lobbyEndTimes:
         return jsonify({'players': lobbies[lobbyCode], 'started': True, 'time': round(lobbyEndTimes[lobbyCode] - time.time()), 'code': problems[lobbyProblemIndices[lobbyCode]]["code"]})
 
-    return jsonify({'players': lobbies[lobbyCode, 'started': False]})
+    return jsonify({'players': lobbies[lobbyCode], 'started': False})
 
 @app.route('/delete-lobby/<int:lobbyCode>', methods=['POST'])
 def delete_lobby(lobbyCode):
