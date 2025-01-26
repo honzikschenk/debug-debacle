@@ -15,7 +15,6 @@ import { baseBackendUrl } from "@/lib/constants";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { ordinal } from "@/lib/utils";
-import 'react-toastify/dist/ReactToastify.css';
 
 
 interface GameProps {
