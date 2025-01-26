@@ -44,7 +44,7 @@ const Game = ({
   const [joinedSocket, setJoinedSocket] = useState(false);
   const [players, setPlayers] = useState<string[]>([]);
   const [score, setScore] = useState(0);
-  const [playerSocres, setPlayerScores] = useState<PlayerScores[]>([]);
+  const [playerScores, setPlayerScores] = useState<PlayerScores[]>([]);
 
   const interval = useRef<NodeJS.Timeout>();
 
@@ -128,8 +128,7 @@ const Game = ({
       });
 
       socket.on('submission', (msg) => {
-        setPlayerScores((prev) => [...prev, { username: msg.username, passed: msg.score[1] / msg.score[0] == 1 }]);
-        setScore((msg.score[1] / msg.score[0]) * 100);
+        setPlayerScores([...playerScores.filter((player) => player.username !== msg.username), { username: msg.username, passed: msg.score[1] / msg.score[0] === 1}]);
       });
 
       setPlayerCount(playerCount + 1);

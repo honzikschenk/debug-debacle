@@ -120,13 +120,13 @@ def submission(lobbyCode):
     if username not in lobbies[lobbyCode]:
         return jsonify({'error': 'User not in lobby'})
 
-    if time.time() > lobbyEndTimes[lobbyCode] + 30:
+    if time.time() > lobbyEndTimes[lobbyCode] + 5:
         return jsonify({'error': 'Time is up!'})
     
     # TODO: Check submission
     score = (5, 7)
 
-    socketio.emit('submission', {'submission': submission, 'username': username, 'result': score}, to=lobbyCode)
+    socketio.emit('submission', {'username': username, 'result': score}, to=lobbyCode)
 
     return jsonify({'success': True})
 
