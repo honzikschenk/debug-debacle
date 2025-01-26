@@ -17,7 +17,7 @@ const History = ({
   submissions
 }: ScoreDisplayProps) => {
   return (
-    <div className="w-full p-4 bg-slate-950 border rounded-lg shadow-sm text-white">
+    <div className="w-full p-4 bg-slate-950 border border-slate-500 rounded-lg shadow-sm text-white">
       <div className="mb-2">
         <h3 className="text-sm font-medium">Submissions</h3>
         <div className="mt-2">

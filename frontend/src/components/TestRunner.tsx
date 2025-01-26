@@ -5,6 +5,7 @@ import { Loader2, Play } from "lucide-react";
 import TestCase from "./TestCase";
 import ScoreDisplay from "./ScoreDisplay";
 import History from "./History";
+import { Submission } from "./game";
 
 interface TestRunnerProps {
   testCases?: Array<{
@@ -22,6 +23,7 @@ interface TestRunnerProps {
     passed: boolean;
   }[];
   isTesting: boolean;
+  submissions: Submission[];
 }
 
 const TestRunner = ({
@@ -45,7 +47,8 @@ const TestRunner = ({
   ],
   onRunTests,
   isTesting,
-  players
+  players,
+  submissions
 }: TestRunnerProps) => {
   return (
     <div className="h-full flex flex-col bg-slate-900 border-l border-slate-800">
@@ -60,20 +63,7 @@ const TestRunner = ({
             </Button>
           </div>
         </div>
-        <History submissions={[
-          {
-            time: new Date(),
-            passed: false
-          },
-          {
-            time: new Date(),
-            passed: false
-          },
-          {
-            time: new Date(),
-            passed: true
-          }
-        ]} />
+        <History submissions={submissions} />
       </div>
 
       <h2 className="text-lg font-semibold text-slate-200 ml-4 mt-4">Other Players</h2>

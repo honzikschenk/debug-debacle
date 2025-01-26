@@ -31,6 +31,11 @@ type PlayerScores = {
   passed: boolean;
 };
 
+export type Submission = {
+  time: Date;
+  passed: boolean;
+}
+
 const Game = ({
   initialCode = 'def Fibonacci(n):\n  # Check if input is 0 then it will\n  # print incorrect input\n  if n < 0:\n    print("Incorrect input")\n  # Check if n is 0\n  # then it will return 0\n  elif n == 0:\n    return 0\n\n  # Check if n is 1,2\n  # it will return 1\n  elif n == 1 or n == 2:\n    return 1\n\n  else:\n    return Fibonacci(n-1) + Fibonacci(n-2)\n\n  # Driver Program\n  print(Fibonacci(9))\n',
   totalTests = 3,
@@ -44,6 +49,8 @@ const Game = ({
   const [players, setPlayers] = useState<string[]>([]);
   const [score, setScore] = useState(0);
   const [playerScores, setPlayerScores] = useState<PlayerScores[]>([]);
+  const [isTesting, setIsTesting] = useState(false);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
 
   const interval = useRef<NodeJS.Timeout>();
 
@@ -68,8 +75,6 @@ const Game = ({
   const { user } = useAuth0();
 
   const navigate = useNavigate();
-
-  const [isTesting, setIsTesting] = useState(false);
 
   const leaveGame = () => {
     navigate('/');
@@ -108,6 +113,9 @@ const Game = ({
         'Content-Type': 'application/json'
       }
     });
+
+    // TODO: correctly add new submission
+    setSubmissions([{ time: new Date(), passed: false }, ...submissions])
     setIsTesting(false);
   };
 
@@ -156,6 +164,7 @@ const Game = ({
         <ResizablePanel defaultSize={50} minSize={30}>
           <TestRunner
             // testCases={playerSocres}
+            submissions={submissions}
             onRunTests={handleRunTests}
             score={score}
             totalTests={totalTests}
