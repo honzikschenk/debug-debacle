@@ -7,7 +7,7 @@ import {
 import CodeEditor from "./CodeEditor";
 import TestRunner from "./TestRunner";
 import TopBar from "./TopBar";
-import { useNavigate, useParams } from "react-router";
+import { redirect, useNavigate, useParams } from "react-router";
 import Lobby from "./Lobby";
 import { socket } from "@/socket";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -106,6 +106,10 @@ const Game = ({
   const fetchPlayers = async () => {
     const currentPlayersRes = await fetch(`${baseBackendUrl}/get-lobby-players/${gameId}`, { method: 'GET' });
     const { players } = await currentPlayersRes.json();
+
+    if (players === undefined) {
+      navigate('/');
+    }
 
     setPlayers(players);
     setInProgPlayers(players);

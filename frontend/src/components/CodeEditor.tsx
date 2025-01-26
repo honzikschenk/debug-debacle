@@ -118,7 +118,7 @@ const CodeEditor = ({
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-0">
             <Command>
-              <CommandInput placeholder="Search framework..." className="h-9" />
+              <CommandInput placeholder="Search theme..." className="h-9" />
               <CommandList>
                 <CommandEmpty>No framework found.</CommandEmpty>
                 <CommandGroup>
@@ -154,6 +154,7 @@ const CodeEditor = ({
           theme="night-owl"
           value={code}
           onChange={onChange}
+          options={{ tabSize: 4, detectIndentation: false }}
           // onMount={handleEditorDidMount}
         />
         </div>
