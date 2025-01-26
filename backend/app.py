@@ -246,4 +246,4 @@ def leaderboard():
 
 if __name__ == '__main__':
     # app.run(debug=True)
-    socketio.run(app, debug=True, port=3001)
+    socketio.run(app, debug=True, port=3001, allow_unsafe_werkzeug=True)
