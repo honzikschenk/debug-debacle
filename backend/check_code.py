@@ -127,7 +127,6 @@ def parse_testcode_data(rawdata : dict):
 def check_code(code :str, input_arr, expected_output_arr):
     results = EvaluatedData(len(input_arr))
 
-
     function_name = find_function_name(code)
     if function_name == "":
         results.errors = 2
@@ -161,7 +160,7 @@ def check_code(code :str, input_arr, expected_output_arr):
         sys.stdout = original_stdout
         sys.stderr = original_error
         
-        
+    #print(results.get_dump())
     return results    
 
 
@@ -173,7 +172,7 @@ def check_code(code :str, input_arr, expected_output_arr):
 {'code': 'def largest_triangle_area(points):\n    area = 0\n    for i in range(len(points)):\n        for j in range(i+1, len(points)):\n            for k in range(j+1, len(points)):\n                x1, y1 = points[i]\n                x2, y2 = points[j]\n                x3, y3 = points[k]\n                area = max(area, 0.5 * abs(x1*(y2-y3) + x2*(y3-y1) + x3*(y1-y2)) + 1)', 'description': 'The function finds the largest area of a triangle formed by any three points in the given set of points.', 'testCases': ['[[[(0, 0), (0, 3), (4, 0)], [(0, 0), (0, 1), (1, 0)], [(0, 0), (1, 1), (2, 0)], [(0, 0), (1, 0), (1, 1)], [(0, 0), (1, 1), (1, -1)]], [6.0, 0.5, 0.5, 0.5, 1.0]]']}
 
 #INVALID - INPUT FORMATTING
-{'code': 'def find_missing_number(arr):\n    n = len(arr)\n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(arr)\n    return expected_sum - actual_sum', 'description': 'This function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6],', '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],', '[100, 101, 102, 103, 104, 105, 106, 107, 108, 109],', '[1, 2, 3, 4, 5],', '[1, 2, 3, 4, 5, 6]]', '[5, 55, 55, 15, 21]']}
+test4 = {'code': 'def find_missing_number(arr):\n    n = len(arr)\n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(arr)\n    return expected_sum - actual_sum', 'description': 'This function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [1, 2, 3, 4, 5, 6, 7, 8, 10, 11], [100, 102, 103, 104, 105, 106, 107, 108, 109], [1, 2, 3, 5], [1, 2, 4, 5, 6]]', '[5, 9, 101, 4, 18]']}
 #VALID
 {'code': 'def find_missing_number(nums):\n    n = len(nums) \n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(nums)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [0, 1, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 6]]', '[5, 0, 10, 5, 6]']}
 #VALID
@@ -185,7 +184,7 @@ def check_code(code :str, input_arr, expected_output_arr):
 #INVALID - TESTCASE 5
 {'code': "def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1][:1]", 'description': 'Checks if a given string is a palindrome, ignoring non-alphanumeric characters and case.', 'testCases': ["['racecar', 'A man a plan a canal Panama', 'Was it a car or a cat I saw?', 'Hello world', 'Madam, in Eden, I'm Adam']", '[True, True, True, False, True]']}
 #INVALID - NOT IN ORDER
-{'code': 'def two_sum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i+1, len(nums)):\n            if nums[i] + nums[j] >= target:\n                return [i, j]', 'description': 'The function `two_sum` takes a list of integers `nums` and a target integer `target`, and returns the indices of the two numbers in `nums` that add up to `target`.', 'testCases': ['[[2, 7, 11, 15, 9], [6, [0, 1]]]', '[[1, 2, 3, 4, 5, 9], [0, 2]]', '[[10, 20, 30, 40, 50], [0, 4]]', '[[1, 2, 3, 4, 5], [0, 1]]', '[[100, 200, 300, 400, 500], [0, 4]]']}
+{'code': 'def two_sum(nums, target):\n    for i in range(len(nums)):\n      for j in range(i+1, len(nums)):\n           if nums[i] + nums[j] >= target:\n               return [i, j]', 'description': 'The function `two_sum` takes a list of integers `nums` and a target integer `target`, and returns the indices of the two numbers in `nums` that add up to `target`.', 'testCases': ['[[2, 7, 11, 15, 9], [6, [0, 1]]]', '[[1, 2, 3, 4, 5, 9], [0, 2]]', '[[10, 20, 30, 40, 50], [0, 4]]', '[[1, 2, 3, 4, 5], [0, 1]]', '[[100, 200, 300, 400, 500], [0, 4]]']}
 
 
 test1_input = ["[5,5]", "[6,6]", "[1,7]", "[10, 11]", "[1,1]"]
@@ -199,16 +198,33 @@ def hello(i):
 
 """
 
+test1_input, test1_output, err = parse_testcode_data({'code': "def findDisappearedNumbers(nums):\n    n = len(nums)\n    result = []\n    for i in range(1, n):\n        if i not in nums:\n            result.append(i)\n    return result", 'testCases': ['[[1, 2, 3, 4, 5], [1, 2, 3, 7, 8, 9, 10], [1], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 5, 6]]', '[[6, 7, 8, 9, 10], [4, 5, 6], [2, 3, 4, 5, 6, 7, 8, 9, 10], [], [4, 7, 8, 9, 10]]']})
+results = check_code("def findDisappearedNumbers(nums):\n    #The function returns a list describing the numbers from 1 to 10 missing from the given list.\n    n = len(nums)\n    result = []\n    for i in range(1, n):\n        if i not in nums:\n            result.append(i)\n    return result", test1_input, test1_output)
+
+print("hello")
+
 test1_input, test1_output, err = parse_testcode_data({'code': 'def find_missing_number(numbers):\n    expected_sum = sum(range(1, len(numbers) + 1))\n    actual_sum = sum(numbers)\n  return expected_sum + actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], [1, 2, 3, 4, 5], [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]', '[5, 10, 6, 55, 12]']}) 
 results = check_code('def find_missing_number(numbers):\n    expected_sum = sum(range(numbers[0], numbers[0]+ len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', test1_input, test1_output)
-print(results.get_dump())
-print(err)
+#print(results.get_dump())
+#print(err)
 
 test1_input, test1_output, err = parse_testcode_data({'code': 'def find_missing_number(nums):\n    n = len(nums) \n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(nums)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [0, 1, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 6]]', '[5, 0, 10, 5, 6]']}) 
 results = check_code('def find_missing_number(nums):\n    n = len(nums) \n    expected_sum = sum(range(nums[0], nums[0]+ len(nums) + 1))\n    actual_sum = sum(nums)\n    return expected_sum - actual_sum', test1_input, test1_output)
 print(results.get_dump())
 
-test1_input, test1_output, err = parse_testcode_data({'code': "def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1][:1]", 'description': 'Checks if a given string is a palindrome, ignoring non-alphanumeric characters and case.', 'testCases': ["['racecar', 'A man a plan a canal Panama', 'Was it a car or a cat I saw?', 'Hello world', 'Madam, in Eden, I'm Adam']", '[True, True, True, False, True]']})
+test1_input, test1_output, err = parse_testcode_data({'code': "def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1][:1]", 'description': 'Checks if a given string is a palindrome, ignoring non-alphanumeric characters and case.', 'testCases': ["['racecar', 'A man a plan a canal Panama', 'Was it a car or a cat I saw?', 'Hello world', 'Madam, in Eden']", '[True, True, True, False, True]']})
 results = check_code("def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1][:1]", test1_input, test1_output)
 print(results.get_dump())
-print(err)
+
+test1_input, test1_output, err = parse_testcode_data({'code': 'def largest_triangle_area(points):\n    #The function finds the largest area of a triangle formed by any three points in the given set of points.\n   area = 0\n    for i in range(len(points)):\n        for j in range(i+1, len(points)):\n            for k in range(j+1, len(points)):\n                x1, y1 = points[i]\n                x2, y2 = points[j]\n                x3, y3 = points[k]\n                area = max(area, 0.5 * abs(x1*(y2-y3) + x2*(y3-y1) + x3*(y1-y2)) + 1)', 
+     'description': '', 
+     'testCases': ['[[(0, 0), (0, 3), (4, 0)], [(0, 0), (0, 1), (1, 0)], [(0, 0), (1, 1), (2, 0)], [(0, 0), (1, 0), (1, 1)], [(0, 0), (1, 1), (1, -1)]]', '[6.0, 0.5, 1.0, 0.5, 1.0]']})
+results = check_code("def largest_triangle_area(points):\n    #The function finds the largest area of a triangle formed by any three points in the given set of points.\n    area = 0\n    for i in range(len(points)):\n      for j in range(i+1, len(points)):\n            for k in range(j+1, len(points)):\n                x1, y1 = points[i]\n                x2, y2 = points[j]\n                x3, y3 = points[k]\n                return max(area, 0.5 * abs(x1*(y2-y3) + x2*(y3-y1) + x3*(y1-y2)) + 1)", 
+     test1_input, test1_output)
+print(results.get_dump())
+
+test1_input, test1_output, err = parse_testcode_data(test4)
+results = check_code('def find_missing_number(arr):\n    n = len(arr)\n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(arr)\n    return expected_sum - actual_sum', test1_input, test1_output)
+print(results.get_dump())
+
+

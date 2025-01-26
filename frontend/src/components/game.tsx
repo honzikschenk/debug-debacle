@@ -15,6 +15,7 @@ import { baseBackendUrl } from "@/lib/constants";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { ordinal } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 
 interface GameProps {
@@ -83,7 +84,9 @@ const Game = ({
 
   const { gameId } = useParams();
 
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { toast } = useToast();
+
+  const { user, isAuthenticated } = useAuth0();
 
   const navigate = useNavigate();
 
@@ -99,9 +102,22 @@ const Game = ({
   const handleRunTests = () => {
     submitCode();
   };
-  
+
+  const handleNotAuthenticated = () => {
+    console.log("OUT");
+    toast({
+      title: "Not Logged In!",
+      description: "Login at the top right to compete against your friends!",
+    })
+  }
+
   const handleStart = async () => {
-    const startRes = await fetch(`${baseBackendUrl}/start-game/${gameId}`, { method: 'POST' });
+    if (!isAuthenticated) {
+      handleNotAuthenticated();
+    }
+    else {
+      const startRes = await fetch(`${baseBackendUrl}/start-game/${gameId}`, { method: 'POST' });
+    }
   };
 
   const fetchPlayers = async () => {
