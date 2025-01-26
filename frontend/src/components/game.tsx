@@ -209,11 +209,12 @@ const Game = ({
         }
 
         if(passedPlayers.length === players.length) {
-          socket.emit('end-game', { lobbyCode: parseInt(gameId) });
+          fetch(`${baseBackendUrl}/end-game/${gameId}`, { method: 'POST' });
         }
       });
 
       socket.on('end-game', (msg) => {
+        interval.current && clearInterval(interval.current);
         setTime(0);
       });
 

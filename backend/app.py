@@ -168,7 +168,7 @@ def start_game(lobbyCode):
     # TODO: Grab code from database
     # competitionCode = sample["code"]
     
-    duration = 300 # 300
+    duration = 240 # 300
 
     lobbyEndTimes[lobbyCode] = time.time() + duration
     lobbyProblemIndices[lobbyCode] = random.randint(0, len(problems) - 1)

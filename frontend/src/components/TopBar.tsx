@@ -37,8 +37,8 @@ const TopBar = ({ time, playerCount, lobbyCode, leaveGame }: TopBarProps) => {
         </div>
         <div className="flex items-center gap-x-2">
           <Timer />
-          {Math.floor(time / 60)}:{String(time % 60).padStart(2, '0')}
-          {/* {time < 0 ? '0:00' : Math.floor(time / 60) + ":" + String(time % 60).padStart(2, '0')} */}
+          {/* {Math.floor(time / 60)}:{String(time % 60).padStart(2, '0')} */}
+          {time <= 0 ? '0:00' : Math.floor(time / 60) + ":" + String(time % 60).padStart(2, '0')}
         </div>
       </div>
       <div className="flex items-center gap-x-2">
