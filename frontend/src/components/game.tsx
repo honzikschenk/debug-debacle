@@ -69,6 +69,8 @@ const Game = ({
 
   const navigate = useNavigate();
 
+  const [isTesting, setIsTesting] = useState(false);
+
   const leaveGame = () => {
     navigate('/');
     socket.emit('leave_lobby', {'lobbyCode': parseInt(gameId), 'username': user.name});
@@ -98,6 +100,7 @@ const Game = ({
   };
 
   const submitCode = async () => {
+    setIsTesting(true);
     const submissionRes = await fetch(`${baseBackendUrl}/submission/${gameId}`, {
       method: 'POST',
       body: JSON.stringify({ username: user.name, submission: code }),
@@ -105,6 +108,7 @@ const Game = ({
         'Content-Type': 'application/json'
       }
     });
+    setIsTesting(false);
   };
 
   useEffect(() => {
@@ -156,6 +160,7 @@ const Game = ({
             score={score}
             totalTests={totalTests}
             passedTests={passedTests}
+            isTesting={isTesting}
             players={playerScores.filter((player) => player.username !== user?.name)}
           />
         </ResizablePanel>

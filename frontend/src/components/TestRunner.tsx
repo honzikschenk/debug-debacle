@@ -1,9 +1,10 @@
 import React from "react";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
-import { Play } from "lucide-react";
+import { Loader2, Play } from "lucide-react";
 import TestCase from "./TestCase";
 import ScoreDisplay from "./ScoreDisplay";
+import History from "./History";
 
 interface TestRunnerProps {
   testCases?: Array<{
@@ -20,6 +21,7 @@ interface TestRunnerProps {
     username: string;
     passed: boolean;
   }[];
+  isTesting: boolean;
 }
 
 const TestRunner = ({
@@ -42,26 +44,36 @@ const TestRunner = ({
     },
   ],
   onRunTests,
-  score,
-  totalTests,
-  passedTests,
+  isTesting,
   players
 }: TestRunnerProps) => {
   return (
     <div className="h-full flex flex-col bg-slate-900 border-l border-slate-800">
       <div className="p-4 border-b border-slate-800">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-slate-200">Test Cases</h2>
-          <Button onClick={onRunTests} variant="secondary" className="flex items-center gap-2">
-            <Play className="w-4 h-4" />
-            Run Tests
-          </Button>
+          <h2 className="text-lg font-semibold text-slate-200">Results</h2>
+          <div className="flex items-center gap-x-3">
+            {isTesting && <Loader2 className="animate-spin text-white" />}
+            <Button onClick={onRunTests} variant="secondary" className="flex items-center gap-2">
+              <Play className="w-4 h-4" />
+              Run Tests
+            </Button>
+          </div>
         </div>
-        <ScoreDisplay
-          score={score}
-          totalTests={totalTests}
-          passedTests={passedTests}
-        />
+        <History submissions={[
+          {
+            time: new Date(),
+            passed: false
+          },
+          {
+            time: new Date(),
+            passed: false
+          },
+          {
+            time: new Date(),
+            passed: true
+          }
+        ]} />
       </div>
 
       <h2 className="text-lg font-semibold text-slate-200 ml-4 mt-4">Other Players</h2>
