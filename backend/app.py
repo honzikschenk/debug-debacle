@@ -100,7 +100,7 @@ def start_game(lobbyCode):
     # TODO: Grab code from database
     competitionCode = 'print("Hello World")\nprint("Yellow Morld")'
     
-    duration = 300
+    duration = 5 # 300
 
     lobbyEndTimes[lobbyCode] = time.time() + duration
 
@@ -126,7 +126,7 @@ def submission(lobbyCode):
     # TODO: Check submission
     score = (5, 7)
 
-    socketio.emit('submission', {'username': username, 'result': score}, to=lobbyCode)
+    socketio.emit('submission', {'submission': submission, 'username': username, 'result': score}, to=lobbyCode)
 
     return jsonify({'success': True})
 
