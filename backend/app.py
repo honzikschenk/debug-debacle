@@ -14,8 +14,54 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 lobbies = {}
 lobbyEndTimes = {}
+lobbyProblemIndices = {}
 
 sample = {'code': "def find_winner(board):\n    for i in range(3):\n        if board[i][0] == board[i][1] == board[i][2] != '-':\n            return board[i][0]\n        elif board[0][i] == board[1][i] == board[2][i] != '-':\n            return board[0][i]\n    if board[0][0] == board[1][1] == board[2][2] != '-':\n        return board[0][0]\n    elif board[0][2] == board[1][1] == board[2][0] != '-':\n        return board[2][0]\n    if '-' not in board:\n        return 'Draw'\n    return 'No Winner'", 'description': 'The code block determines the winner (or a draw) of a tic-tac-toe game based on the given board.', 'testCases': ['[', "[['X', 'X', 'X', '-', '-', '-', '-', '-', '-'], 'X'],", "[['O', 'O', 'O', '-', '-', '-', '-', '-', '-'], 'O'],", "[['X', 'O', 'X', 'O', 'X', 'O', 'O', 'X', 'X'], 'Draw'],", "[['-', '-', '-', '-', '-', '-', '-', '-', '-'], 'No Winner'],", "[['X', 'O', '-', 'O', 'X', '-', 'X', '-', '-'], 'X']", ']']}
+
+problems = [
+    {
+        "code": """def twoSum(arr: tuple[list[int], int]) -> list[int]:
+    # Finds the indices of two numbers in nums that add up to target
+    # The 1st element of arr is nums and the 2nd element of arr is target
+
+    complements = dict()
+
+    nums, target = arr
+
+    for i, num in enumerate(nums):
+        if num in complements:
+            return [complements[num], i]
+        complements[num] = i""",
+        "description": "",
+        "testCases": ["[[[2, 7, 11, 15], 9], [[3, 2, 4], 6], [[3, 3], 6]]", "[[0, 1], [1, 2], [0, 1]]"]
+    },
+    {
+        "code": """def isPalindrome(x: int) -> bool:
+    # Checks whether x is a palindrome
+    return x == x[::-1]""",
+        "description": "",
+        "testCases": ["[121, -121, 10]", "[True, False, False]"]
+    },
+    {
+        "code": """def lengthOfLongestSubstring(s: str) -> int:
+    # Finds the length of the longest substring without repeating characters
+    substring_start = 0
+    chars = dict()
+    max_length = 0
+
+    for i, ch in enumerate(s):
+        if ch in chars:
+            substring_start = max(substring_start, chars[ch] + 1)
+        chars[ch] = i
+        
+        length = i - substring_start
+        max_length = max(max_length, length)
+    
+    return max_length""",
+        "description": "",
+        "testCases": ['["abcabcbb", "bbbbb", "pwwkew"]', "[3, 1, 3]"]
+    }
+]
 
 @app.route('/create-lobby', methods=['POST'])
 def create_lobby():
@@ -101,11 +147,13 @@ def start_game(lobbyCode):
         return jsonify({'error': 'Lobby not found'})
     
     # TODO: Grab code from database
-    competitionCode = sample["code"]
+    # competitionCode = sample["code"]
     
     duration = 300 # 300
 
     lobbyEndTimes[lobbyCode] = time.time() + duration
+    lobbyProblemIndices[lobbyCode] = random.randint(0, len(problems) - 1)
+    competitionCode = problems[lobbyProblemIndices[lobbyCode]]["code"]
 
     socketio.emit('start-game', {'code': competitionCode, 'time': duration}, to=str(lobbyCode))
 
@@ -131,9 +179,9 @@ def submission(lobbyCode):
     #========================================================================================================
     # TODO: Check submission
     code = submission
-    code = "def find_missing_number(arr):   pass"
     #raw_data = {'code': 'def find_missing_number(numbers):\n    expected_sum = sum(range(1, len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], [1, 2, 3, 4, 5], [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]', '[5, 10, 6, 55, 12]']}
-    raw_data = {'code': 'def find_missing_number(numbers):\n    expected_sum = sum(range(1, len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], [1, 2, 3, 4, 5], [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]', '[5, 10, 6, 55, 12]']}
+    # raw_data = {'code': 'def find_missing_number(numbers):\n    expected_sum = sum(range(1, len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [9, 11, 12, 13, 14, 15, 16, 17, 18, 19], [1, 2, 3, 4, 5, 7]]', '[5, 10, 6]']}
+    raw_data = problems[lobbyProblemIndices[lobbyCode]]
 
     given_input, given_output, parse_error = parse_testcode_data(raw_data)
     result = check_code(code, given_input, given_output)

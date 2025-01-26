@@ -148,11 +148,6 @@ const Game = ({
 
   useEffect(() => {
     if (user?.name && !joinedSocket) {
-      socket.emit('join_lobby', {
-        lobbyCode: parseInt(gameId),
-        username: user.name
-      });
-
       socket.on('start-game', (msg) => {
         setStarted(true);
         setCode(msg.code);
@@ -174,6 +169,11 @@ const Game = ({
           setInProgPlayers((prev) => prev.filter((player) => player !== msg.username));
           setPassedPlayers((prev) => [...prev, msg.username]);
         }
+      });
+
+      socket.emit('join_lobby', {
+        lobbyCode: parseInt(gameId),
+        username: user.name
       });
 
       setJoinedSocket(true);
