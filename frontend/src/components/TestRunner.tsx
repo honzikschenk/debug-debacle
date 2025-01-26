@@ -16,7 +16,10 @@ interface TestRunnerProps {
   score?: number;
   totalTests?: number;
   passedTests?: number;
-  players: string[];
+  players: {
+    username: string;
+    passed: boolean;
+  }[];
 }
 
 const TestRunner = ({
@@ -61,13 +64,15 @@ const TestRunner = ({
         />
       </div>
 
+      <h2 className="text-lg font-semibold text-slate-200 ml-4 mt-4">Other Players</h2>
+
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {players.map((player, index) => (
             <TestCase
-              key={index}
-              name={player}
-              passed={true}
+              key={player.username}
+              name={player.username}
+              passed={player.passed}
             />
           ))}
         </div>

@@ -91,6 +91,10 @@ const Game = ({
     const { players } = await currentPlayersRes.json();
 
     setPlayers(players);
+    setPlayerScores(players.map((player) => ({
+      username: player,
+      passed: false
+    })));
   };
 
   const submitCode = async () => {
@@ -152,7 +156,7 @@ const Game = ({
             score={score}
             totalTests={totalTests}
             passedTests={passedTests}
-            players={players.filter((player) => player !== user?.name)}
+            players={playerScores.filter((player) => player.username !== user?.name)}
           />
         </ResizablePanel>
       </ResizablePanelGroup>
