@@ -1,2 +1,2 @@
-export const baseBackendUrl = 'http://127.0.0.1:3001';
-export const baseFrontendUrl = 'http://localhost:5173'
+export const baseBackendUrl = import.meta.env.VITE_BACKEND_URL;
+export const baseFrontendUrl = import.meta.env.VITE_FRONTEND_URL;
