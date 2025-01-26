@@ -8,8 +8,6 @@ import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { baseBackendUrl } from "@/lib/constants";
 import { useAuth0 } from "@auth0/auth0-react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 
 type Lobby = {
@@ -67,18 +65,6 @@ const Home = () => {
   // };
 
   const navigate = useNavigate();
-
-  const handleNotAuthenticated = () => {
-    toast.success('You need to log in!', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  }
 
   useEffect(() => {
     fetchLobbies();
