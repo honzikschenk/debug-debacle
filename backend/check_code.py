@@ -73,6 +73,8 @@ def split_input(raw, type_input :bool):
     return arr
 
 def check_validity(arr, origlen :int):
+    if(len(arr) != 5):
+        return True
     if (arr[0] == True or arr[0] == False):
         return True
     total_char = 0
