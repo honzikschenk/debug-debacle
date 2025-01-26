@@ -7,8 +7,8 @@ from check_code import check_code, parse_testcode_data
 import subprocess
 
 from flask_socketio import SocketIO, join_room, leave_room, emit, send # type: ignore
-from dotenv import load_dotenv
-from supabase import Client, create_client
+from dotenv import load_dotenv # type: ignore
+from supabase import Client, create_client # type: ignore
 import os
 
 load_dotenv()
