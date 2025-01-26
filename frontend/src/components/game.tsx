@@ -106,11 +106,19 @@ const Game = ({
   const fetchPlayers = async () => {
     const currentPlayersRes = await fetch(`${baseBackendUrl}/get-lobby-players/${gameId}`, { method: 'GET' });
     const { players } = await currentPlayersRes.json();
-
+    if (user?.name === "") {
+      if (user?.nickname) user.name = user.nickname;
+      else if (user?.preferred_username) user.name = user.preferred_username;
+      else if (user?.given_name) user.name = user.given_name;
+      else if (user?.family_name) user.name = user.family_name;
+      else {
+        user.name = user.email;
+        user.name = user.name.slice((user.name.length) / 2 + 1, user.name.length - 1);
+      }
+    } 
     if (players === undefined) {
       navigate('/');
     }
-
     setPlayers(players);
     setInProgPlayers(players);
   };
@@ -142,12 +150,22 @@ const Game = ({
   }, [passed]);
 
   useEffect(() => {
+    //console.log("Got players", players);
     fetchPlayers();
   }, []);
 
 
   useEffect(() => {
+    //console.log(user?.name, "<== User name");
+    //console.log(user?.nickname, "<== user nickname");
+    
     if (user?.name && !joinedSocket) {
+      console.log("Attempting to join...");
+      socket.emit('join_lobby', {
+        lobbyCode: parseInt(gameId),
+        username: user.name
+      });
+
       socket.on('start-game', (msg) => {
         setStarted(true);
         setCode(msg.code);
@@ -177,6 +195,9 @@ const Game = ({
       });
 
       setJoinedSocket(true);
+    }
+    else {
+      fetchPlayers();
     }
   }, [user?.name, joinedSocket, socket, gameId]);
 
