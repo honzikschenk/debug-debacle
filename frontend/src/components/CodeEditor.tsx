@@ -154,6 +154,7 @@ const CodeEditor = ({
           theme="night-owl"
           value={code}
           onChange={onChange}
+          options={{ tabSize: 4, detectIndentation: false }}
           // onMount={handleEditorDidMount}
         />
         </div>
