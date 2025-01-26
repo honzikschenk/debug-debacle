@@ -27,7 +27,7 @@ interface GameProps {
 }
 
 const Game = ({
-  initialCode = '# Write your Python code here\nprint("Hello World!")',
+  initialCode = 'def Fibonacci(n):\n  # Check if input is 0 then it will\n  # print incorrect input\n  if n < 0:\n    print("Incorrect input")\n  # Check if n is 0\n  # then it will return 0\n  elif n == 0:\n    return 0\n\n  # Check if n is 1,2\n  # it will return 1\n  elif n == 1 or n == 2:\n    return 1\n\n  else:\n    return Fibonacci(n-1) + Fibonacci(n-2)\n\n  # Driver Program\n  print(Fibonacci(9))\n',
   testCases = [
     {
       input: 'print("Hello World")',

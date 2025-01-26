@@ -10,7 +10,7 @@ interface CodeEditorProps {
 }
 
 const CodeEditor = ({
-  code = '# Write your Python code here\nprint("Hello World!")',
+  code = '',
   onChange = () => {},
   onRun = () => {},
 }: CodeEditorProps) => {
