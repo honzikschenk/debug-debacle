@@ -87,7 +87,7 @@ const Game = ({
 
   const { toast } = useToast();
 
-  const { user, isAuthenticated } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   const navigate = useNavigate();
 
