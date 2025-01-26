@@ -73,8 +73,6 @@ def split_input(raw, type_input :bool):
     return arr
 
 def check_validity(arr, origlen :int):
-    if(len(arr) != 5):
-        return True
     if (arr[0] == True or arr[0] == False):
         return True
     total_char = 0
@@ -130,7 +128,7 @@ def check_code(code :str, input_arr, expected_output_arr):
     results = EvaluatedData(len(input_arr))
 
     function_name = find_function_name(code)
-    if function_name == "":
+    if function_name == "" or (len(input_arr) != len(expected_output_arr)):
         results.errors = 2
         return results
     shared_code = {}
