@@ -156,6 +156,7 @@ const Game = ({
             score={score}
             totalTests={totalTests}
             passedTests={passedTests}
+            players={players.filter((player) => player !== user.name)}
           />
         </ResizablePanel>
       </ResizablePanelGroup>
