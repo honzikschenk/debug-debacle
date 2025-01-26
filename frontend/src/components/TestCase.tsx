@@ -9,8 +9,9 @@ interface TestCaseProps {
   // expectedOutput?: string;
   // actualOutput?: string;
   passed: boolean;
-  // index?: number;
+  index: number;
   name: string;
+  user?: string;
 }
 
 const TestCase = ({
@@ -18,16 +19,17 @@ const TestCase = ({
   // expectedOutput = "Hello World",
   // actualOutput = "Hello World",
   passed,
-  // index = 1,
-  name
+  index,
+  name,
+  user
 }: TestCaseProps) => {
   return (
-    <Card className="p-4 mb-4 bg-slate-950 border-slate-800">
+    <Card className={cn("p-4 mb-4 bg-slate-950 text-white border-slate-800", {'border border-white': user === name, 'bg-yellow-500 text-black': passed && index === 0, 'bg-gray-400 text-black': passed && index == 1, 'bg-yellow-700': passed && index === 2})}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-medium text-slate-200">
-              {name}
+            <h3 className="text-sm font-medium">
+              {passed ? `${index + 1}. ${name}` : name}
             </h3>
             <Badge
               className={cn("flex items-center gap-1", passed ? 'bg-green-600' : '')}

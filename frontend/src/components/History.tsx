@@ -34,7 +34,7 @@ const History = ({
                 </TableHeader>
                 <TableBody>
                   {submissions.map((sub, i) => (
-                    <TableRow key={i}>
+                    <TableRow key={submissions.length - i - 1}>
                       <TableCell>{submissions.length - i - 1}</TableCell>
                       <TableCell>
                         <Badge

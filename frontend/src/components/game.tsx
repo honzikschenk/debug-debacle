@@ -12,6 +12,9 @@ import Lobby from "./Lobby";
 import { socket } from "@/socket";
 import { useAuth0 } from "@auth0/auth0-react";
 import { baseBackendUrl } from "@/lib/constants";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Button } from "./ui/button";
+import { ordinal } from "@/lib/utils";
 
 interface GameProps {
   initialCode?: string;
@@ -48,9 +51,14 @@ const Game = ({
   const [joinedSocket, setJoinedSocket] = useState(false);
   const [players, setPlayers] = useState<string[]>([]);
   const [score, setScore] = useState(0);
-  const [playerScores, setPlayerScores] = useState<PlayerScores[]>([]);
+  const [inProgPlayers, setInProgPlayers] = useState<string[]>([]);
+  const [passedPlayers, setPassedPlayers] = useState<string[]>([]);
   const [isTesting, setIsTesting] = useState(false);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [congratsOpen, setCongratsOpen] = useState(false);
+  const [place, setPlace] = useState<number | null>(null);
+  const [passed, setPassed] = useState(false);
+  const [timeoutOpen, setTimeoutOpen] = useState(false);
 
   const interval = useRef<NodeJS.Timeout>();
 
@@ -62,7 +70,9 @@ const Game = ({
     }
 
     if(time <= 0 && interval.current) {
-      submitCode();
+      if (!passed) {
+        submitCode();
+      }
       clearInterval(interval.current);
     }
     if(time === maxTime) {
@@ -98,10 +108,7 @@ const Game = ({
     const { players } = await currentPlayersRes.json();
 
     setPlayers(players);
-    setPlayerScores(players.map((player) => ({
-      username: player,
-      passed: false
-    })));
+    setInProgPlayers(players);
   };
 
   const submitCode = async () => {
@@ -114,14 +121,26 @@ const Game = ({
       }
     });
 
-    // TODO: correctly add new submission
-    setSubmissions([{ time: new Date(), passed: false }, ...submissions])
+    const { success } = await submissionRes.json();
+
+    setSubmissions([{ time: new Date(), passed: success }, ...submissions])
+    if (!success && time <= 0) {
+      setTimeoutOpen(true);
+    }
     setIsTesting(false);
   };
 
   useEffect(() => {
+    if (passed) {
+      setPlace(passedPlayers.length);
+      setCongratsOpen(true);
+    }
+  }, [passed]);
+
+  useEffect(() => {
     fetchPlayers();
   }, []);
+
 
   useEffect(() => {
     if (user?.name && !joinedSocket) {
@@ -139,11 +158,18 @@ const Game = ({
       })
 
       socket.on('joined_lobby', (msg) => {
-        setPlayers((prev) => [...prev, msg])
+        setPlayers((prev) => [...prev, msg]);
+        setInProgPlayers((prev) => [...prev, msg]);
       });
 
       socket.on('submission', (msg) => {
-        setPlayerScores([...playerScores.filter((player) => player.username !== msg.username), { username: msg.username, passed: msg.score[1] / msg.score[0] === 1}]);
+        if (msg.score[1] / msg.score[0] === 1 && !passedPlayers.includes(msg.username)) {
+          if (msg.username === user?.name) {
+            setPassed(true);
+          }
+          setInProgPlayers((prev) => prev.filter((player) => player !== msg.username));
+          setPassedPlayers((prev) => [...prev, msg.username]);
+        }
       });
 
       setJoinedSocket(true);
@@ -153,7 +179,30 @@ const Game = ({
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
       {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} players={players} />}
+      <Dialog open={congratsOpen} onOpenChange={(open) => setCongratsOpen(open)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>You found the bug!</DialogTitle>
+            <DialogDescription>
+              &#127881; Congrats! You finished {ordinal(place)}.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={timeoutOpen} onOpenChange={(open) => setTimeoutOpen(open)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Out of time!</DialogTitle>
+            <DialogDescription>
+              &#9200; You're out of time! Check the bottom right to see the results.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
       <TopBar time={time} playerCount={players.length} lobbyCode={parseInt(gameId)} leaveGame={leaveGame} />
+      
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
           <CodeEditor code={code} onChange={setCode} onRun={handleRunCode} />
@@ -170,7 +219,10 @@ const Game = ({
             totalTests={totalTests}
             passedTests={passedTests}
             isTesting={isTesting}
-            players={playerScores.filter((player) => player.username !== user?.name)}
+            inProgPlayers={inProgPlayers}
+            passedPlayers={passedPlayers}
+            user={user?.name}
+            passed={passed || time <= 0}
           />
         </ResizablePanel>
       </ResizablePanelGroup>
