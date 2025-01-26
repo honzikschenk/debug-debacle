@@ -29,15 +29,19 @@ class EvaluatedData:
     def get_dump(self):
         return (self.actual_output, self.expected_output, self.test_outcome, self.errors, self.actual_correct, self.total_tests)
 
-{'code': 'def is_palindrome(s):\n    left = 0\n    right = len(s)\n    while left < right:\n        if s[left].lower() != s[right-1].lower():\n            return False\n        left += 1\n        right -= 1\n    return True', 'description': 'The function checks if a given string is a palindrome.', 'testCases': ["['', 'A', 'radar', 'race car', 'a man a plan a canal panama']", '[True, True, True, True, True]']}
+{'code': 'def find_missing_number(arr):\n    n = len(arr)\n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(arr)\n    return expected_sum - actual_sum', 'description': 'This function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6],', '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],', '[100, 101, 102, 103, 104, 105, 106, 107, 108, 109],', '[1, 2, 3, 4, 5],', '[1, 2, 3, 4, 5, 6]]', '[5, 55, 55, 15, 21]']}
 
-{'code': 'def find_missing_number(arr):\n    n = len(arr) \n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(arr)\n    return expected_sum - actual_sum + 1', 'description': 'The function `find_missing_number` takes an array `arr` and returns the missing number in the range `[1, n]`, where `n` is the length of the array plus 1.', 'testCases': ['[1, 2, 3, 4, 5, 6, 7, 8, 9]', '[10]', '[1, 2, 3, 4, 5, 6, 7, 8]', '[9]', '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]', '[12]', '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]', '[10]', '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]', '[11]']}
+{'code': 'def find_missing_number(nums):\n    n = len(nums) \n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(nums)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [0, 1, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 6]]', '[5, 0, 10, 5, 6]']}
 
-{'code': 'def find_unique_elements(lst):\n    """\n    Given a list of elements, return a new list with only the unique elements.\n    """\n    unique_elements = set()\n    for item in lst:\n        if item % 2 == 0:\n            unique_elements.add(item)\n    return list(unique_elements)', 'description': 'The function removes duplicate elements from a list.', 'testCases': ['[', '[1, 2, 3, 4, 5],', '[1, 2, 3, 4, 5],', '[1, 1, 2, 2, 3],', '[1, 2, 3],', '[1, 2, 3, 4, 5, 1, 2, 3, 4, 5],', '[1],', '["apple", "banana", "cherry", "apple"],', '["apple", "banana", "cherry"],', '[],', '[]', ']']}
+{'code': 'def find_missing_number(numbers):\n    expected_sum = sum(range(1, len(numbers) + 1))\n    actual_sum = sum(numbers)\n    return expected_sum - actual_sum', 'description': 'The function finds the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], [1, 2, 3, 4, 5], [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]]', '[5, 10, 6, 55, 12]']}
 
-{'code': 'def find_unique_characters(string):\n    unique_chars = set()\n    for char in string:\n        if char in unique_chars:\n            unique_chars.remove(char)\n        else:\n            unique_chars.add(char)\n    return len(unique_chars)', 'description': 'The function finds the number of unique characters in a given string.', 'testCases': ["['abc', 'aabb', 'hello world', '', 'abcabc']", '[3, 2, 10, 0, 3]']}
+{'code': "def palindrome_checker(s):\n    s = ''.join(c for c in s.lower() if c.isalnum())\n    left, right = 0, len(s) - 1\n    while left <= right:\n        if s[left] != s[right]:\n            return True\n        left += 1\n        right -= 1\n    return False", 'description': 'The function checks if a given string is a palindrome, ignoring non-alphanumeric characters and case.', 'testCases': ["['civic', 'A man a plan a canal Panama', 'race car', 'Hello World', 'Madam, I'm Adam']", '[True, True, True, False, True]']}
 
-{'code': "def is_palindrome(s):\n    s = ''.join(c for c in s.upper() if c.isalnum())\n    return s == s[::-1]", 'description': 'This function checks if a given string is a palindrome.', 'testCases': ["['racecar', 'A man, a plan, a canal: Panama', 'Madam, I'm Adam', 'hello', '12321']", "['True', 'True', 'True', 'False', 'True']"]}
+{'code': 'def find_missing_number(arr):\n    n = len(arr) \n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(arr)\n    return expected_sum - actual_sum', 'description': 'The function calculates the missing number in a list of consecutive integers.', 'testCases': ['[[1, 2, 3, 4, 6], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], [1, 2, 3, 4], [1, 2, 3, 5, 6]]', '[5, 45, 66, 10, 4]']}
+
+{'code': "def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1][:1]", 'description': 'Checks if a given string is a palindrome, ignoring non-alphanumeric characters and case.', 'testCases': ["['racecar', 'A man a plan a canal Panama', 'Was it a car or a cat I saw?', 'Hello world', 'Madam, in Eden, I'm Adam']", '[True, True, True, False, True]']}
+
+{'code': 'def two_sum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i+1, len(nums)):\n            if nums[i] + nums[j] >= target:\n                return [i, j]', 'description': 'The function `two_sum` takes a list of integers `nums` and a target integer `target`, and returns the indices of the two numbers in `nums` that add up to `target`.', 'testCases': ['[[2, 7, 11, 15, 9], [6, [0, 1]]]', '[[1, 2, 3, 4, 5, 9], [0, 2]]', '[[10, 20, 30, 40, 50], [0, 4]]', '[[1, 2, 3, 4, 5], [0, 1]]', '[[100, 200, 300, 400, 500], [0, 4]]']}
 
 
 test1_input = ["\"ski\"", "\"biz\"", "\"green \"", "\"pine \"", "\"Chirstmas \""]
@@ -68,13 +72,56 @@ def create_test_line(function_name, input):
     test_lines = test_lines + "\n" + "print(" + function_name + "(" + input + "))"
     return test_lines
 
+def clean_input(raw_input):
+    clean_input = raw_input
+    return clean_input
+
+
+def clean_output(raw_output :str):
+    return raw_output
+
+def split_input(raw):
+    arr = []
+    num_brackets = 0
+    inquotes = False
+    front_iter = 0
+    rear_iter = 0
+    for i in range(len(raw)):
+        if (raw[i] == '\''):
+            inquotes = not inquotes
+        elif (raw[i] == '['):
+            num_brackets += 1
+        elif (raw[i] == ']'):
+            num_brackets -= 1
+        elif (raw[i] == ' ' or raw[i] == ','):
+            if (raw[i] == ' ' and not inquotes and num_brackets == 0 and raw[i-1] == ','):
+                rear_iter = i + 1
+            elif(raw[i] == ',' and not inquotes and num_brackets == 0):
+                front_iter = i
+                arr.append(raw[rear_iter:front_iter])
+                inquotes = False
+                rear_iter = front_iter
+    arr.append(raw[rear_iter:-1])
+    return arr
+
+
 def parse_testcode_data(rawdata):
-    input_arr = clean_input
-    expected_output_arr = clea
+    raw_input, raw_output = "", ""
+    input_arr, expected_output_arr = [], []
+    error = False
+    print(rawdata['testCases'])
+    if len(rawdata['testCases']) == 2:
+        raw_output = rawdata['testCases'][1]
+        raw_input = rawdata['testCases'][0]
+        raw_output = raw_output[1:]
+        raw_input = raw_input[1:]
+        input_arr = split_input(raw_input)
+        expected_output_arr = split_input(raw_output)
 
+    else:
+        error = True
 
-
-    return input_arr, expected_output_arr
+    return input_arr, expected_output_arr, error
 
 #REQUIREMENTS
 #PRE:
@@ -127,5 +174,5 @@ def check_code(code :str, rawdata : dict):
         
     return results    
     
-results = check_code(test1, test1_input, test1_output)
-print(results.get_dump())
+#results = check_code(test1, test1_input, test1_output)
+#print(results.get_dump())
