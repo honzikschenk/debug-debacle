@@ -40,7 +40,6 @@ def handle_join_lobby(data):
         return
 
     lobbies[lobbyCode].append(username)
-    print("joined room")
     join_room(str(lobbyCode))
     emit('joined_lobby', username, to=str(lobbyCode))
 

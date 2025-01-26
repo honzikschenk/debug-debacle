@@ -76,28 +76,32 @@ const Home = () => {
         <p className="mt-5 text-lg">Compete with others to fix bugs in code.</p>
         <Button onClick={createLobby} variant="secondary" className="mt-5">Create a Lobby</Button>
 
-        <p className="text-slate-500 my-2">or</p>
-        
-        <ScrollArea className="max-h-72 w-48 rounded-md border border-slate-500">
-          <div className="py-4 px-2">
-            <h4 className="mb-4 text-sm font-medium leading-none text-center">Join a Lobby</h4>
-            {lobbies.map((lobby, i) => (
-              <>
-                <NavLink key={lobby.id} className="cursor-pointer flex items-center justify-between py-2 px-2 hover:bg-slate-800 transition" to={`/game/${lobby.id}`}>
-                  <span className="text-sm">
-                    #{lobby.id}
-                  </span>
-                  <span className="text-xs flex items-center">
-                    <User className="w-3 h-3" /> {lobby.players}
-                  </span>
-                </NavLink>
-                {i !== lobbies.length - 1 &&
-                  <Separator className="bg-slate-500" />
-                }
-              </>
-            ))}
-          </div>
-        </ScrollArea>
+        {lobbies.length > 0 && (
+          <>
+            <p className="text-slate-500 my-2">or</p>
+            
+            <ScrollArea className="max-h-72 w-48 rounded-md border border-slate-500">
+              <div className="py-4 px-2">
+                <h4 className="mb-4 text-sm font-medium leading-none text-center">Join a Lobby</h4>
+                {lobbies.map((lobby, i) => (
+                  <>
+                    <NavLink key={lobby.id} className="cursor-pointer flex items-center justify-between py-2 px-2 hover:bg-slate-800 transition" to={`/game/${lobby.id}`}>
+                      <span className="text-sm">
+                        #{lobby.id}
+                      </span>
+                      <span className="text-xs flex items-center">
+                        <User className="w-3 h-3" /> {lobby.players}
+                      </span>
+                    </NavLink>
+                    {i !== lobbies.length - 1 &&
+                      <Separator className="bg-slate-500" />
+                    }
+                  </>
+                ))}
+              </div>
+            </ScrollArea>
+          </>
+        )}
       </div>
     </div>
   )
