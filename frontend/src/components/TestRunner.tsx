@@ -18,12 +18,12 @@ interface TestRunnerProps {
   score?: number;
   totalTests?: number;
   passedTests?: number;
-  players: {
-    username: string;
-    passed: boolean;
-  }[];
+  inProgPlayers: string[];
+  passedPlayers: string[]
   isTesting: boolean;
   submissions: Submission[];
+  user?: string;
+  passed: boolean;
 }
 
 const TestRunner = ({
@@ -47,8 +47,11 @@ const TestRunner = ({
   ],
   onRunTests,
   isTesting,
-  players,
-  submissions
+  inProgPlayers,
+  passedPlayers,
+  submissions,
+  user,
+  passed
 }: TestRunnerProps) => {
   return (
     <div className="h-full flex flex-col bg-slate-900 border-l border-slate-800">
@@ -57,7 +60,7 @@ const TestRunner = ({
           <h2 className="text-lg font-semibold text-slate-200">Results</h2>
           <div className="flex items-center gap-x-3">
             {isTesting && <Loader2 className="animate-spin text-white" />}
-            <Button onClick={onRunTests} variant="secondary" className="flex items-center gap-2">
+            <Button onClick={onRunTests} variant="secondary" className="flex items-center gap-2" disabled={passed}>
               <Play className="w-4 h-4" />
               Run Tests
             </Button>
@@ -66,15 +69,26 @@ const TestRunner = ({
         <History submissions={submissions} />
       </div>
 
-      <h2 className="text-lg font-semibold text-slate-200 ml-4 mt-4">Other Players</h2>
+      <h2 className="text-lg font-semibold text-slate-200 ml-4 mt-4">Leaderboard</h2>
 
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {players.map((player, index) => (
+          {passedPlayers.map((player, index) => (
             <TestCase
-              key={player.username}
-              name={player.username}
-              passed={player.passed}
+              key={player}
+              index={index}
+              name={player}
+              passed={true}
+              user={user}
+            />
+          ))}
+          {inProgPlayers.map((player, index) => (
+            <TestCase
+              key={player}
+              index={index}
+              name={player}
+              passed={false}
+              user={user}
             />
           ))}
         </div>
