@@ -3,7 +3,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Card } from "./ui/card";
 import "@/lib/prism-theme.css";
 
+import dracula from '../themes/dracula.json';
 import githubDark from '../themes/github-dark.json';
+import monokai from '../themes/monokai.json';
 import nightOwl from '../themes/night-owl.json';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Button } from './ui/button';
@@ -19,7 +21,9 @@ interface CodeEditorProps {
 
 const themes = {
   'Night Owl': nightOwl,
-  'GitHub Dark': githubDark
+  'GitHub Dark': githubDark,
+  'Dracula': dracula,
+  'Monokai': monokai
 };
 
 const CodeEditor = ({
