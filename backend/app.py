@@ -121,6 +121,8 @@ def handle_leave_lobby(data):
 
     if len(lobbies[lobbyCode]) == 0:
         del lobbies[lobbyCode]
+        del lobbyEndTimes[lobbyCode]
+        del lobbyProblemIndices[lobbyCode]
 
     leave_room(lobbyCode)
     emit('left_lobby', username + ' has left the room.', to=str(lobbyCode))
@@ -138,8 +140,10 @@ def get_lobby_players(lobbyCode):
     print(lobbies)
     if lobbyCode not in lobbies:
         return jsonify({'error': 'Lobby not found'})
+    if lobbyCode in lobbyEndTimes:
+        return jsonify({'players': lobbies[lobbyCode], 'started': True, 'time': round(lobbyEndTimes[lobbyCode] - time.time()), 'code': problems[lobbyProblemIndices[lobbyCode]]["code"]})
 
-    return jsonify({'players': lobbies[lobbyCode]})
+    return jsonify({'players': lobbies[lobbyCode, 'started': False]})
 
 @app.route('/delete-lobby/<int:lobbyCode>', methods=['POST'])
 def delete_lobby(lobbyCode):
@@ -147,6 +151,8 @@ def delete_lobby(lobbyCode):
         return jsonify({'error': 'Lobby not found'})
 
     del lobbies[lobbyCode]
+    del lobbyEndTimes[lobbyCode]
+    del lobbyProblemIndices[lobbyCode]
     return jsonify({'success': True})
 
 @app.route('/get-lobbies', methods=['GET'])

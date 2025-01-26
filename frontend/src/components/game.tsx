@@ -105,7 +105,8 @@ const Game = ({
 
   const fetchPlayers = async () => {
     const currentPlayersRes = await fetch(`${baseBackendUrl}/get-lobby-players/${gameId}`, { method: 'GET' });
-    const { players } = await currentPlayersRes.json();
+    const currentPlayersData = await currentPlayersRes.json();
+    const { players, started } = currentPlayersData;
     if (user?.name === "") {
       if (user?.nickname) user.name = user.nickname;
       else if (user?.preferred_username) user.name = user.preferred_username;
@@ -118,6 +119,12 @@ const Game = ({
     } 
     if (players === undefined) {
       navigate('/');
+    }
+    if (started) {
+      setStarted(true);
+      setCode(currentPlayersData.code);
+      setTime(currentPlayersData.time);
+      setMaxTime(currentPlayersData.time);
     }
     setPlayers(players);
     setInProgPlayers(players);
