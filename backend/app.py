@@ -154,6 +154,7 @@ def submission(lobbyCode):
         print("UNABLE TO FIND FUNCTION DEFINITION")
     else:
         score = result.get_overall_state()
+    print(result.get_dump())
     #========================================================================================================
     socketio.emit('submission', {'username': username, 'score': score}, to=str(lobbyCode))
 
