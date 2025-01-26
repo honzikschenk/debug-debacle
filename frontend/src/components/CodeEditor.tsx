@@ -1,4 +1,4 @@
-import Editor, { OnMount } from '@monaco-editor/react';
+import Editor, { OnMount, useMonaco } from '@monaco-editor/react';
 import React, { useEffect, useRef } from "react";
 import { Card } from "./ui/card";
 import "@/lib/prism-theme.css";
@@ -15,6 +15,24 @@ const CodeEditor = ({
   onRun = () => {},
 }: CodeEditorProps) => {
   const preRef = useRef<HTMLPreElement>(null);
+
+  const monaco = useMonaco();
+
+  useEffect(() => {
+    if (!monaco) return;
+    monaco.editor.defineTheme('my-theme', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#0f172a',
+      }
+    });
+
+    monaco.editor.setTheme('my-theme');
+  }, [monaco]);
+
+  
 
   // const onKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
   //   // Fix indent
@@ -54,11 +72,11 @@ const CodeEditor = ({
   //   }
   // };
 
-  const editorRef = useRef(null);
+  // const editorRef = useRef(null);
 
-  const handleEditorDidMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor;
-  }
+  // const handleEditorDidMount: OnMount = (editor, monaco) => {
+  //   editorRef.current = editor;
+  // }
 
   return (
     <Card className="h-full flex flex-col bg-slate-950 border-slate-800">
@@ -71,9 +89,11 @@ const CodeEditor = ({
         <div className="relative h-full">
         <Editor
           defaultLanguage="python"
-          defaultValue="# some comment"
-          theme="vs-dark"
-          onMount={handleEditorDidMount}
+          // defaultValue="# some comment"
+          theme="my-theme"
+          value={code}
+          onChange={onChange}
+          // onMount={handleEditorDidMount}
         />
         </div>
       </div>
