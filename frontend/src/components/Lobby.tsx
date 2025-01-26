@@ -1,6 +1,7 @@
 import { Link, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast"
+import { baseFrontendUrl } from "@/lib/constants";
 
 interface LobbyProps {
   id: number;
@@ -13,11 +14,11 @@ const Lobby = ({ id, onStart, players }: LobbyProps) => {
   const { toast } = useToast();
 
   const copyCode = (): void => {
-    navigator.clipboard.writeText(id.toString())
+    navigator.clipboard.writeText(`${baseFrontendUrl}/game/${id}`)
     toast({
-        title: "Code Copied!",
-        description: "You can now share the code with your friends."
-      })
+      title: "Code Copied!",
+      description: "You can now share the code with your friends."
+    })
   }
 
   return (

@@ -39,7 +39,6 @@ const Game = ({
   const [code, setCode] = useState(initialCode);
   const [time, setTime] = useState(0);
   const [maxTime, setMaxTime] = useState(1);
-  const [playerCount, setPlayerCount] = useState(0);
   const [started, setStarted] = useState(false);
   const [joinedSocket, setJoinedSocket] = useState(false);
   const [players, setPlayers] = useState<string[]>([]);
@@ -131,8 +130,6 @@ const Game = ({
         setPlayerScores([...playerScores.filter((player) => player.username !== msg.username), { username: msg.username, passed: msg.score[1] / msg.score[0] === 1}]);
       });
 
-      setPlayerCount(playerCount + 1);
-
       setJoinedSocket(true);
     }
   }, [user?.name, joinedSocket, socket, gameId]);
@@ -140,7 +137,7 @@ const Game = ({
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
       {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} players={players} />}
-      <TopBar time={time} playerCount={playerCount} lobbyCode={parseInt(gameId)} leaveGame={leaveGame} />
+      <TopBar time={time} playerCount={players.length} lobbyCode={parseInt(gameId)} leaveGame={leaveGame} />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
           <CodeEditor code={code} onChange={setCode} onRun={handleRunCode} />
@@ -155,7 +152,7 @@ const Game = ({
             score={score}
             totalTests={totalTests}
             passedTests={passedTests}
-            players={players.filter((player) => player !== user.name)}
+            players={players.filter((player) => player !== user?.name)}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

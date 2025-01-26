@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Button } from "./ui/button";
 import { NavLink } from "react-router-dom";
 import { Toaster } from "./ui/toaster";
+import { baseFrontendUrl } from "@/lib/constants";
 
 interface TopBarProps {
   time: number;
@@ -15,20 +16,20 @@ const TopBar = ({ time, playerCount, lobbyCode, leaveGame }: TopBarProps) => {
   const { toast } = useToast();
 
   const copyCode = (): void => {
-    navigator.clipboard.writeText(lobbyCode.toString())
+    navigator.clipboard.writeText(`${baseFrontendUrl}/game/${lobbyCode.toString()}`)
     toast({
-        title: "Code Copied!",
-        description: "You can now share the code with your friends."
-      })
+      title: "Code Copied!",
+      description: "You can now share the code with your friends."
+    })
   }
 
   return (
     <nav className="h-12 w-full text-white bg-slate-800 flex justify-between items-center px-5 relative z-20">
       <div className="flex items-center gap-x-10">
-        <NavLink className="font-mono font-bold text-xl mr-5" to="/">Bug Fixer</NavLink>
+        <NavLink className="font-mono font-bold text-xl mr-5" to="/">Debug Debacle</NavLink>
         <div className="flex items-center gap-x-2">
           <User />
-          {playerCount} player {playerCount > 1 ? 's' : ''}
+          {playerCount} player{playerCount > 1 ? 's' : ''}
         </div>
         <div className="flex items-center gap-x-2">
           <Gamepad2 />
