@@ -125,7 +125,7 @@ def handle_leave_lobby(data):
         del lobbyProblemIndices[lobbyCode]
 
     leave_room(lobbyCode)
-    emit('left_lobby', username + ' has left the room.', to=str(lobbyCode))
+    emit('left_lobby', username, to=str(lobbyCode))
 
 @app.route('/get-lobby-player-count/<int:lobbyCode>', methods=['GET'])
 def get_lobby_info(lobbyCode):
@@ -178,6 +178,19 @@ def start_game(lobbyCode):
 
     return jsonify({'success': True, 'time': duration})
 
+@app.route('/end-game/<int:lobbyCode>', methods=['POST'])
+def end_game(lobbyCode):
+    if lobbyCode not in lobbies:
+        return jsonify({'error': 'Lobby not found'})
+    
+    if lobbyCode not in lobbyEndTimes:
+        return jsonify({'error': 'Game not started'})
+
+    lobbyEndTimes[lobbyCode] = 0
+    socketio.emit('end-game', to=str(lobbyCode))
+
+    return jsonify({'success': True})
+
 @app.route('/submission/<int:lobbyCode>', methods=['POST'])
 def submission(lobbyCode):
     data = request.get_json()
@@ -226,6 +239,7 @@ def submission(lobbyCode):
         score = result.get_overall_state()
     print(result.get_dump())
     #========================================================================================================
+
     socketio.emit('submission', {'username': username, 'score': score}, to=str(lobbyCode))
 
     return jsonify({'success': score[0] == score[1]})

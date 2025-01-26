@@ -1,5 +1,14 @@
 import { useNavigate } from "react-router";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import Navbar from "./Navbar";
@@ -16,11 +25,16 @@ type Lobby = {
 };
 
 const Home = () => {
-  const { user } = useAuth0();
+  const { user, isAuthenticated, loginWithRedirect } = useAuth0();
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 
   const createLobby = async () => {
+    if(!isAuthenticated) {
+      setIsDialogOpen(true);
+      return;
+    }
     const createRes = await fetch(`${baseBackendUrl}/create-lobby`, { method: 'POST' });
     const createData = await createRes.json();
     navigate(`/game/${createData.lobbyCode}`);
@@ -104,6 +118,20 @@ const Home = () => {
           </>
         )}
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Error!</DialogTitle>
+          <DialogDescription>
+            Please log in to create a lobby.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button onClick={() => loginWithRedirect()}>Log in</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     </div>
   )
 };

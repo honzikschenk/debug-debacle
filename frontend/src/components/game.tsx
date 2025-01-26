@@ -83,7 +83,7 @@ const Game = ({
 
   const { gameId } = useParams();
 
-  const { user } = useAuth0();
+  const { user, isAuthenticated, isLoading } = useAuth0();
 
   const navigate = useNavigate();
 
@@ -162,6 +162,12 @@ const Game = ({
     fetchPlayers();
   }, []);
 
+  useEffect(() => {
+    if(!isLoading && !isAuthenticated) {
+      navigate('/');
+    }
+  }, [isLoading]);
+
 
   useEffect(() => {
     //console.log(user?.name, "<== User name");
@@ -187,6 +193,12 @@ const Game = ({
         setInProgPlayers((prev) => [...prev, msg]);
       });
 
+      socket.on('leave_lobby', (msg) => {
+        setPlayers((prev) => prev.filter((player) => player !== msg));
+        setInProgPlayers((prev) => prev.filter((player) => player !== msg));
+        setPassedPlayers((prev) => prev.filter((player) => player !== msg));
+      });
+
       socket.on('submission', (msg) => {
         if (msg.score[1] / msg.score[0] === 1 && !passedPlayers.includes(msg.username)) {
           if (msg.username === user?.name) {
@@ -195,6 +207,14 @@ const Game = ({
           setInProgPlayers((prev) => prev.filter((player) => player !== msg.username));
           setPassedPlayers((prev) => [...prev, msg.username]);
         }
+
+        if(passedPlayers.length === players.length) {
+          socket.emit('end-game', { lobbyCode: parseInt(gameId) });
+        }
+      });
+
+      socket.on('end-game', (msg) => {
+        setTime(0);
       });
 
       socket.emit('join_lobby', {
