@@ -31,6 +31,11 @@ type PlayerScores = {
   passed: boolean;
 };
 
+export type Submission = {
+  time: Date;
+  passed: boolean;
+}
+
 const Game = ({
   initialCode = 'def Fibonacci(n):\n  # Check if input is 0 then it will\n  # print incorrect input\n  if n < 0:\n    print("Incorrect input")\n  # Check if n is 0\n  # then it will return 0\n  elif n == 0:\n    return 0\n\n  # Check if n is 1,2\n  # it will return 1\n  elif n == 1 or n == 2:\n    return 1\n\n  else:\n    return Fibonacci(n-1) + Fibonacci(n-2)\n\n  # Driver Program\n  print(Fibonacci(9))\n',
   totalTests = 3,
@@ -39,12 +44,13 @@ const Game = ({
   const [code, setCode] = useState(initialCode);
   const [time, setTime] = useState(0);
   const [maxTime, setMaxTime] = useState(1);
-  const [playerCount, setPlayerCount] = useState(0);
   const [started, setStarted] = useState(false);
   const [joinedSocket, setJoinedSocket] = useState(false);
   const [players, setPlayers] = useState<string[]>([]);
   const [score, setScore] = useState(0);
   const [playerScores, setPlayerScores] = useState<PlayerScores[]>([]);
+  const [isTesting, setIsTesting] = useState(false);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
 
   const interval = useRef<NodeJS.Timeout>();
 
@@ -92,9 +98,14 @@ const Game = ({
     const { players } = await currentPlayersRes.json();
 
     setPlayers(players);
+    setPlayerScores(players.map((player) => ({
+      username: player,
+      passed: false
+    })));
   };
 
   const submitCode = async () => {
+    setIsTesting(true);
     const submissionRes = await fetch(`${baseBackendUrl}/submission/${gameId}`, {
       method: 'POST',
       body: JSON.stringify({ username: user.name, submission: code }),
@@ -102,6 +113,10 @@ const Game = ({
         'Content-Type': 'application/json'
       }
     });
+
+    // TODO: correctly add new submission
+    setSubmissions([{ time: new Date(), passed: false }, ...submissions])
+    setIsTesting(false);
   };
 
   useEffect(() => {
@@ -131,8 +146,6 @@ const Game = ({
         setPlayerScores([...playerScores.filter((player) => player.username !== msg.username), { username: msg.username, passed: msg.score[1] / msg.score[0] === 1}]);
       });
 
-      setPlayerCount(playerCount + 1);
-
       setJoinedSocket(true);
     }
   }, [user?.name, joinedSocket, socket, gameId]);
@@ -140,7 +153,7 @@ const Game = ({
   return (
     <div className="h-screen w-full bg-slate-950 flex flex-col">
       {!started && <Lobby id={parseInt(gameId)} onStart={handleStart} players={players} />}
-      <TopBar time={time} playerCount={playerCount} lobbyCode={parseInt(gameId)} leaveGame={leaveGame} />
+      <TopBar time={time} playerCount={players.length} lobbyCode={parseInt(gameId)} leaveGame={leaveGame} />
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} minSize={30}>
           <CodeEditor code={code} onChange={setCode} onRun={handleRunCode} />
@@ -151,11 +164,13 @@ const Game = ({
         <ResizablePanel defaultSize={50} minSize={30}>
           <TestRunner
             // testCases={playerSocres}
+            submissions={submissions}
             onRunTests={handleRunTests}
             score={score}
             totalTests={totalTests}
             passedTests={passedTests}
-            players={players.filter((player) => player !== user.name)}
+            isTesting={isTesting}
+            players={playerScores.filter((player) => player.username !== user?.name)}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

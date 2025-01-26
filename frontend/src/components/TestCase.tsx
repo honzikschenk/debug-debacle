@@ -2,6 +2,7 @@ import React from "react";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { CheckCircle, XCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TestCaseProps {
   // input?: string;
@@ -24,20 +25,19 @@ const TestCase = ({
     <Card className="p-4 mb-4 bg-slate-950 border-slate-800">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2">
             <h3 className="text-sm font-medium text-slate-200">
               {name}
             </h3>
             <Badge
-              variant={passed ? "default" : "destructive"}
-              className="flex items-center gap-1"
+              className={cn("flex items-center gap-1", passed ? 'bg-green-600' : '')}
             >
               {passed ? (
                 <CheckCircle className="w-3 h-3" />
               ) : (
                 <XCircle className="w-3 h-3" />
               )}
-              {passed ? "Passed" : "Failed"}
+              {passed ? "Passed" : "In Progress"}
             </Badge>
           </div>
 

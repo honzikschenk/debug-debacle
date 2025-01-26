@@ -72,8 +72,8 @@ const Home = () => {
     <div className="min-h-screen w-full bg-slate-950 text-white">
       <Navbar />
       <div className="px-48 py-24 flex items-center justify-center flex-col">
-        <h1 className="text-7xl">Code Fixer</h1>
-        <p className="mt-5 text-lg">Compete with others to fix bugs in code.</p>
+        <h1 className="text-7xl">Debug Debacle</h1>
+        <p className="mt-5 text-lg">Compete against others to fix bugs in code.</p>
         <Button onClick={createLobby} variant="secondary" className="mt-5">Create a Lobby</Button>
 
         {lobbies.length > 0 && (
