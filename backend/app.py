@@ -6,7 +6,7 @@ from check_code import check_code, parse_testcode_data
 from vetted_problem import problems
 import os
 
-from gumloop import GumloopClient # type: ignore
+# from gumloop import GumloopClient # type: ignore
 
 import subprocess
 
@@ -17,10 +17,10 @@ import os
 
 load_dotenv()
 
-client = GumloopClient(
-    api_key=os.environ.get("GUMLOOP_API_KEY"),
-    user_id=os.environ.get("GUMLOOP_USER_ID")
-)
+# gumloopClient = GumloopClient(
+#     api_key=os.environ.get("GUMLOOP_API_KEY"),
+#     user_id=os.environ.get("GUMLOOP_USER_ID")
+# )
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
@@ -133,7 +133,7 @@ def start_game(lobbyCode):
         return jsonify({'error': 'Lobby not found'})
     
     # TODO: Grab code from database
-    # outputCode = client.run_flow(
+    # outputCode = gumloopClient.run_flow(
     #     flow_id="jyTN43gYcSfcSJxJ4Y8cdn",
     #     inputs={
     #         "prompt": "Largest Triangle Area"
@@ -141,14 +141,14 @@ def start_game(lobbyCode):
     # )
 
     # while(parse_testcode_data(outputCode)[2]):
-    #     outputCode = client.run_flow(
+    #     outputCode = gumloopClient.run_flow(
     #         flow_id="jyTN43gYcSfcSJxJ4Y8cdn",
     #         inputs={
     #             "prompt": "Largest Triangle Area"
     #         }
     #     )
 
-    outputCode = problems[random.randint(0, problems.length - 1)]
+    outputCode = problems[random.randint(0, len(problems) - 1)]
     
     competitionCode = outputCode["code"] + "\n# " + outputCode["description"]
     lobbyRawData[lobbyCode] = outputCode
