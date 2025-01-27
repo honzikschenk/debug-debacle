@@ -57,6 +57,6 @@ problems = [
      'testCases': ['[[(0, 0), (0, 3), (4, 0)], [(0, 0), (0, 1), (1, 0)], [(0, 0), (1, 1), (2, 0)], [(0, 0), (1, 0), (1, 1)], [(0, 0), (1, 1), (1, -1)]]', '[6.0, 0.5, 1.0, 0.5, 1.0]']
     },
     {'code': 'def find_missing_number(arr):\n    #This function finds the missing number in a list of consecutive integers.\n    n = len(arr)\n    expected_sum = n * (n + 1) // 2\n    actual_sum = sum(arr)\n    return expected_sum - actual_sum', 'description': '', 
-     'testCases': ['[[1, 2, 3, 4, 6], [1, 2, 3, 4, 5, 6, 7, 8, 10, 11], [100, 102, 103, 104, 105, 106, 107, 108, 109], [1, 2, 3, 5], [1, 2, 4, 5, 6]]', '[5, 9, 101, 4, 18]']
+     'testCases': ['[[1, 2, 3, 4, 6], [1, 2, 3, 4, 5, 6, 7, 8, 10, 11], [100, 102, 103, 104, 105, 106, 107, 108, 109], [1, 2, 3, 5], [1, 2, 4, 5, 6]]', '[5, 9, 101, 4, 3]']
     },
     ]
