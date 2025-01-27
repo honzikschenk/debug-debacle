@@ -10,10 +10,10 @@ def generateNewProblem():
     url = "https://api.gumloop.com/api/v1/start_pipeline"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + os.environ.get("GUMLOOPS_API")
+        "Authorization": "Bearer " + os.environ.get("GUMLOOPS_API_KEY")
     }
     data = {
-        "user_id": "HTkX4HyNatTqhqg0EXpTRMD4BMv2",
+        "user_id": os.environ.get("GUMLOOPS_USER_ID"),
         "saved_item_id": "jyTN43gYcSfcSJxJ4Y8cdn",
         "prompt": var
     }
@@ -22,10 +22,10 @@ def generateNewProblem():
 
     data = json.loads(response.text)
 
-    url = "https://api.gumloop.com/api/v1/get_pl_run?run_id=" + data["run_id"] + "&user_id=HTkX4HyNatTqhqg0EXpTRMD4BMv2&api_key=" + os.environ.get("GUMLOOPS_API")
+    url = "https://api.gumloop.com/api/v1/get_pl_run?run_id=" + data["run_id"] + "&user_id=" + os.environ.get("GUMLOOPS_USER_ID") + "&api_key=" + os.environ.get("GUMLOOPS_API_KEY")
 
     headers = {
-        "Authorization": "Bearer " + os.environ.get("GUMLOOPS_API")
+        "Authorization": "Bearer " + os.environ.get("GUMLOOPS_API_KEY")
     }
 
     response = requests.get(url)
