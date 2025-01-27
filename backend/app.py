@@ -148,7 +148,7 @@ def start_game(lobbyCode):
     #         }
     #     )
 
-    outputCode = problems[random.randint(0, 2)]
+    outputCode = problems[random.randint(0, problems.length - 1)]
     
     competitionCode = outputCode["code"] + "\n# " + outputCode["description"]
     lobbyRawData[lobbyCode] = outputCode
